@@ -7,17 +7,19 @@ Passive executor — receives commands and reports states but does not make engi
 
 ## Architecture
 - **Output topology**: GPIO → TC4427A dual gate driver → 100Ω → IRFZ44N gate, 10kΩ pulldown
-- **Current sensing**: Low-side shunt resistors on every channel, read via 3× CD74HC4067 analog MUX (Teensy) or direct ADC (S32K358)
+- **Current sensing**: Low-side shunt resistors on every channel, direct ADC per channel (no MUX)
+- **Switch inputs**: All direct GPIO (no port expanders)
 - **Safety**: 3-layer protection (upstream fuse + firmware stuck-on detection + redundant switching on fire-risk channels)
 - **47 channels**: 25 switched + 5 enable + 17 sub-loads + H-bridge
 - **Zero mechanical relays**
 
-## MCU Targets
-- **Prototype**: Teensy 4.1 (IMXRT1062, 600 MHz Cortex-M7)
-- **Production**: NXP S32K358 (dual CM7 @ 240MHz, AEC-Q100, lockstep, 6× CAN FD)
-- **HAL**: `firmware/hal/` abstracts all MCU-specific code. Firmware modules are platform-independent.
-- Teensy build: `pio run -e PDCM`
-- S32K358 build: CMake + NXP S32 SDK (future)
+## MCU
+- **NXP S32K358** (dual CM7 @ 240MHz, AEC-Q100 Grade 1, lockstep, 6× CAN FD, HDQFP-172)
+- Building directly on S32K358 from day one — no Teensy prototype phase (ADR-009)
+- 172 pins = enough for all 47 outputs + all inputs + ADC, no external I/O expanders
+- **HAL**: `firmware/hal/` abstracts MCU-specific code. Firmware modules are platform-independent.
+- Build: CMake + NXP S32 Design Studio + RTD SDK
+- Debug: PEmicro or Lauterbach JTAG
 
 ## Platform Submodule
 This repo includes `silverado-platform` as a git submodule at `firmware/platform/`. Single source of truth for:
@@ -62,17 +64,17 @@ This repo includes `silverado-platform` as a git submodule at `firmware/platform
 firmware/
 ├── hal/
 │   ├── HAL.h                  (platform abstraction interface)
-│   ├── teensy/TeensyHAL.cpp   (Arduino + FlexCAN_T4)
-│   └── s32k358/S32KHAL.cpp    (NXP RTD SDK — placeholder)
+│   ├── s32k358/S32KHAL.cpp    (NXP RTD SDK — primary target)
+│   └── teensy/TeensyHAL.cpp   (Arduino + FlexCAN_T4 — reference only)
 ├── shared/
 │   ├── PDCMConfig.h           (pin maps, ADC config, constants)
 │   └── PDCMTypes.h            (enums, structs, timing)
 ├── src/
 │   ├── main.cpp               (init + scheduler)
-│   ├── GateDriver.h/.cpp      (TC4427A output control)
-│   ├── CurrentSense.h/.cpp    (shunt current measurement)
+│   ├── GateDriver.h/.cpp      (TC4427A output control — all direct GPIO)
+│   ├── CurrentSense.h/.cpp    (shunt current measurement — direct ADC)
 │   ├── HBridge.h/.cpp         (DRV8876 4WD motor)
-│   ├── SwitchInput.h/.cpp     (switch reading + debounce)
+│   ├── SwitchInput.h/.cpp     (switch reading + debounce — direct GPIO)
 │   ├── BrakeMonitor.h/.cpp    (dual brake + BOP)
 │   ├── BatteryMonitor.h/.cpp  (voltage monitoring)
 │   ├── LightController.h/.cpp (headlights, turns, fade, welcome/goodbye)
@@ -92,15 +94,17 @@ firmware/
 - PDCM is a passive executor — never make engine decisions.
 - Brake switches on DIRECT GPIO — never behind SPI/I2C.
 - Brake state at 50ms rate — safety-critical path for BOP.
-- Document decisions in DECISIONS.md (ADR-001 through ADR-008).
+- Document decisions in DECISIONS.md (ADR-001 through ADR-009).
 
 ## Environment
-- Firmware: C++ (Arduino/Teensy framework for prototype), PlatformIO
-- CAN library: FlexCAN_T4
-- SPI devices: MCP23S17 (port expander), CD74HC4067 (analog MUX)
+- Firmware: C++ (bare-metal, NXP RTD SDK)
+- Build: CMake + NXP S32 Design Studio
+- Debug: JTAG (PEmicro or Lauterbach)
+- CAN: S32K358 native FlexCAN FD (no external library)
 - H-bridge: TI DRV8876 (4WD encoder motor)
 - Gate driver: TC4427A (×24 ICs, dual channel)
 - MOSFET: IRFZ44N (×~46)
+- No SPI peripherals (no MCP23S17, no CD74HC4067 — S32K358 has enough pins)
 
 ## Dependencies
 - **Required**: ECM (fan commands, relay commands, heartbeat)
@@ -112,4 +116,4 @@ firmware/
 
 ## Current Phase
 **Phase 2 — Firmware Architecture** (complete)
-**Phase 3 — Hardware Design** (next)
+**Phase 3 — Hardware Design (S32K358)** (current)

@@ -39,17 +39,19 @@ Full solid-state power distribution module for a 1998 Chevy Silverado custom ele
 - CAN timeout failsafe (fans → 100%, fuel pump → off)
 - NP246 transfer case state machine with stall detection
 
-## MCU
+## MCU — NXP S32K358
 
-| | Prototype | Production |
-|--|-----------|------------|
-| **MCU** | Teensy 4.1 (IMXRT1062) | NXP S32K358 |
-| **Core** | Cortex-M7 @ 600MHz | Dual Cortex-M7 @ 240MHz |
-| **CAN** | FlexCAN_T4 | 6× CAN FD (native) |
-| **Safety** | Software watchdog | Hardware lockstep + SWT |
-| **Grade** | — | AEC-Q100 Grade 1 |
+| | Spec |
+|--|------|
+| **Part** | NXP S32K358GHT1MPCST |
+| **Package** | HDQFP-172 |
+| **Core** | Dual Cortex-M7 @ 240MHz |
+| **Flash / RAM** | 8MB / 1MB |
+| **CAN** | 6× CAN FD (native) |
+| **Safety** | Hardware lockstep + SWT watchdog |
+| **Grade** | AEC-Q100 Grade 1 |
 
-Firmware uses a Hardware Abstraction Layer (HAL) — all modules are platform-independent.
+Building directly on S32K358 — no Teensy prototype phase. 172 pins eliminates the need for port expanders (MCP23S17) and analog MUX (CD74HC4067). All outputs, inputs, and ADC channels are direct. Firmware uses a HAL — all modules are platform-independent.
 
 ## CAN Bus
 
@@ -60,11 +62,12 @@ Vehicle CAN FD bus: 1 Mbps arbitration, 8 Mbps data, MCP2562FD transceivers.
 ## Build
 
 ```bash
-# Teensy prototype
-pio run -e PDCM
+# S32K358 (CMake + NXP S32 Design Studio)
+cmake -B build -G "Unix Makefiles"
+cmake --build build
 
-# Upload
-pio run -e PDCM -t upload
+# Teensy reference build (retained, not primary)
+pio run -e PDCM
 ```
 
 ## Project Structure
@@ -89,8 +92,8 @@ PDCM/
 
 ## Current Phase
 
-**Phase 2 — Firmware Architecture**: Complete. All 13 firmware modules, HAL, and 8 ADRs written.
-**Phase 3 — Hardware Design**: Next. Schematic design in progress.
+**Phase 2 — Firmware Architecture**: Complete. All 13 firmware modules, HAL, and 9 ADRs written.
+**Phase 3 — Hardware Design (S32K358)**: Current. Schematic design around S32K358.
 
 ## Author
 

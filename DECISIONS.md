@@ -27,9 +27,10 @@ All 47 output channels use TC4427A dual gate driver + N-channel MOSFET. Same pro
 
 ---
 
-## ADR-002: NXP S32K358 Production MCU (Platform-Wide)
+## ADR-002: NXP S32K358 as Primary MCU (No Teensy Prototype)
 
 **Date**: 2026-03-11
+**Updated**: 2026-03-12
 **Status**: Accepted
 
 **MCU**: NXP S32K358GHT1MPCST — dual Cortex-M7 @ 240MHz, AEC-Q100 Grade 1, HDQFP-172.
@@ -39,18 +40,20 @@ All 47 output channels use TC4427A dual gate driver + N-channel MOSFET. Same pro
 - -40°C to +150°C junction
 
 **Decision:**
-- S32K358 replaces Teensy 4.1 across ALL vehicle modules (ECM, PDCM, GCM, future)
-- Teensy 4.1 remains the prototype/dev platform — firmware written with HAL for both targets
-- S32K358 dev hardware (eval board + JTAG probe) required before production port
+- Build directly on S32K358 from day one — no Teensy 4.1 prototype phase
+- S32K358 is the only target MCU for PDCM
 - 50× S32K358 already on hand
+- Teensy HAL retained in repo for reference/testing but is not the build target
 
 **Rationale:**
+- 50 chips on hand — no reason to prototype on a different MCU and port later
+- Skipping Teensy eliminates an entire prototype→port cycle
+- S32K358 has enough GPIO and ADC channels to remove all SPI peripherals (MCP23S17, CD74HC4067) — drastically simpler hardware
 - AEC-Q100 Grade 1 automotive qualification
 - Lockstep cores provide hardware fault detection for safety-critical functions (brakes)
 - 6× CAN FD — enough for any module, no external CAN controllers needed
-- 172 pins — enough GPIO for 47 outputs without port expanders in production
-- Dual CM7 @ 240MHz — vastly more capable than needed, room for future features
-- Platform-wide standardization reduces BOM complexity and tooling overhead
+- 172 pins — enough GPIO for all 47 outputs + all switch inputs + all ADC, no expanders
+- Platform-wide standardization (same MCU across ECM, PDCM, GCM, future modules)
 
 ---
 
@@ -142,9 +145,7 @@ Low-side shunt resistor on every output channel. Shunt values sized per channel:
 - **50mΩ** — medium loads (headlights, horn, wiper, accessory, rock lights)
 - **100mΩ** — light loads (turn signals, brake lights, reverse, DRL, interior, cameras, modules)
 
-**Teensy prototype**: 3× CD74HC4067 (16:1 analog MUX) → 3 ADC pins, MUX select lines driven by MCP23S17 SPI port expander (saves GPIO). 48 channels → 3 MUX ICs × 16 channels each.
-
-**S32K358 production**: Direct ADC — S32K358 has enough ADC channels for every shunt (no MUX needed, lower latency, simpler BOM).
+**Implementation**: Direct ADC — S32K358 has 2× SAR ADC instances with 40+ external channels. Every shunt gets its own dedicated ADC channel. No analog MUX needed.
 
 **Decision:**
 - Software overcurrent thresholds configurable per channel
@@ -175,8 +176,8 @@ These are the only loads where MOSFET fails-short = fire risk.
 
 ### Additional safety measures
 - Brake switches on DIRECT MCU GPIO (never behind SPI/I2C — no bus in safety path)
-- Hardware watchdog enabled (IMXRT1062 WDOG on Teensy, S32K358 SWT on production)
-- S32K358 lockstep mode for brake monitoring (production)
+- Hardware watchdog: S32K358 SWT (Software Watchdog Timer)
+- S32K358 lockstep mode for brake monitoring
 - CAN timeout failsafe states per output:
   - Fans → 100% (prevent overheat)
   - Fuel pump → off (prevent flood)
@@ -205,28 +206,30 @@ Recovery with 0.5V hysteresis (e.g., COMFORT loads restore when battery recovers
 
 ---
 
-## ADR-007: Dual-Target Firmware (Teensy + S32K358)
+## ADR-007: HAL-Abstracted Firmware (S32K358 Primary)
 
 **Date**: 2026-03-11
+**Updated**: 2026-03-12
 **Status**: Accepted
 
 Hardware Abstraction Layer (HAL) isolates all MCU-specific code. Firmware logic (light controller, fan controller, fault manager, etc.) is platform-independent.
 
-**HAL implementations:**
-- `firmware/hal/teensy/TeensyHAL.cpp` — Arduino framework + FlexCAN_T4
-- `firmware/hal/s32k358/S32KHAL.cpp` — NXP RTD SDK (placeholder until dev board arrives)
+**Primary HAL implementation:**
+- `firmware/hal/s32k358/S32KHAL.cpp` — NXP RTD SDK (real implementation)
 
-**Build targets:**
-- Teensy: PlatformIO (`pio run -e PDCM`)
-- S32K358: CMake + NXP S32 Design Studio (future)
+**Secondary (reference/test):**
+- `firmware/hal/teensy/TeensyHAL.cpp` — Arduino framework + FlexCAN_T4 (retained for reference)
+
+**Build system:**
+- CMake + NXP S32 Design Studio + RTD package
+- PlatformIO config retained for Teensy reference builds
 
 **HAL interface covers:**
-- GPIO read/write
+- GPIO read/write (all 47 outputs + switch inputs direct, no expanders)
 - PWM output (0–1000 = 0.0–100.0%)
-- ADC read (12-bit)
-- CAN FD send/receive with callbacks
-- SPI transfer (for MCP23S17 + CD74HC4067 on Teensy)
-- Hardware watchdog feed
+- ADC read (direct per-channel, no MUX)
+- CAN FD send/receive with callbacks (native S32K358 FlexCAN)
+- Hardware watchdog (SWT)
 - Millisecond/microsecond timers
 
 ---
@@ -259,3 +262,35 @@ Replaces 4 discrete MOSFETs + 2 TC4427A channels for the transfer case encoder m
 Same approach applies to any bidirectional motor loads added later (power windows, mirrors, seats).
 
 Controlled by FourWDController state machine in firmware.
+
+---
+
+## ADR-009: Skip Teensy Prototype — Build S32K358 from Day One
+
+**Date**: 2026-03-12
+**Status**: Accepted
+
+**Decision:**
+Skip the Teensy 4.1 prototype phase entirely. Build PDCM hardware directly around the NXP S32K358.
+
+**Hardware simplification (vs Teensy prototype):**
+- **Remove 3× CD74HC4067 analog MUX** — S32K358 has 2× SAR ADC with 40+ external channels, direct ADC per shunt
+- **Remove 2× MCP23S17 port expanders** — S32K358 has 172 pins, enough GPIO for all outputs and inputs directly
+- **Remove SPI bus** — no SPI peripherals needed (CAN FD is native to S32K358)
+- **Net: 7 fewer ICs**, simpler PCB, fewer failure modes, lower latency on current sense and switch reads
+
+**Firmware impact:**
+- All 13 firmware modules unchanged (they only call HAL functions)
+- `S32KHAL.cpp` becomes the real implementation (was placeholder)
+- `TeensyHAL.cpp` retained in repo for reference
+- `CurrentSense` simplifies: direct ADC reads instead of MUX stepping
+- `GateDriver` simplifies: all direct GPIO, no expander path
+- `SwitchInput` simplifies: all direct GPIO reads, no expander
+- HAL interface removes SPI/expander/MUX functions (not needed)
+- Build system: CMake + NXP RTD SDK replaces PlatformIO
+
+**Rationale:**
+- 50× S32K358 already on hand — no cost barrier
+- Prototyping on Teensy then porting wastes a full development cycle
+- The hardware is dramatically simpler on S32K358 (fewer ICs, no SPI bus)
+- Firmware is HAL-abstracted — modules don't care which MCU runs them
