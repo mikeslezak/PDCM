@@ -12,195 +12,161 @@
 | Module ID | 0x10 |
 | CAN Range | 0x350–0x36F |
 
+**Source of truth**: CAN IDs and struct definitions are in the `silverado-platform` submodule (`can/VehicleCAN.h` and `can/VehicleMessages.h`). This document provides field-level detail.
+
 ---
 
 ## Published Messages (PDCM → Vehicle Bus)
 
-### 0x350 — Switch States (8B, 100ms)
+### 0x350 — Switch States (8B, 100ms) — `VehMsgSwitchState`
 
 All driver switch inputs packed into a single message.
 
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7:6 | turnSignal | 0=off, 1=left, 2=right |
-| 0 | 5 | highBeam | High beam active |
-| 0 | 4 | flashToPass | Flash-to-pass active |
-| 0 | 3 | hazard | Hazard switch on |
-| 0 | 2 | horn | Horn button pressed |
-| 0 | 1:0 | wiperMode | 0=off, 1=int, 2=low, 3=high |
-| 1 | 7 | washer | Washer active |
-| 1 | 6:4 | hvacFanSpeed | 0–7 fan speed |
-| 1 | 3:2 | hvacMode | 0=off, 1=vent, 2=floor, 3=defrost |
-| 1 | 1:0 | keyPosition | 0=off, 1=acc, 2=run, 3=start |
-| 2 | 7 | acRequest | Driver A/C request |
-| 2 | 6 | rearDefrost | Rear defrost switch |
-| 2–7 | — | reserved | Future expansion |
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | stalk_left | b0=turn_left, b1=turn_right, b2=high_beam, b3=flash_to_pass |
+| 1 | stalk_right | Cruise stalk (raw state, events sent via 0x353) |
+| 2 | hazards | b0=hazard_on, b1=horn |
+| 3 | wipers | WiperMode enum (0=off, 1=int, 2=low, 3=high, 4=wash) |
+| 4 | hvac_fan | Blower speed 0–7 |
+| 5 | hvac_mode | Mode selector (0=off, 1=vent, 2=floor, 3=defrost) |
+| 6 | key_position | KeyPosition enum (0=off, 1=acc, 2=run, 3=start) |
+| 7 | reserved | — |
 
-### 0x351 — Light State (4B, 100ms)
+### 0x351 — Light State (4B, 100ms) — `VehMsgLightState`
 
-Current lighting output state.
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7 | headlowL | Left low beam on |
-| 0 | 6 | headlowR | Right low beam on |
-| 0 | 5 | headhighL | Left high beam on |
-| 0 | 4 | headhighR | Right high beam on |
-| 0 | 3 | turnL | Left turn signal on |
-| 0 | 2 | turnR | Right turn signal on |
-| 0 | 1 | brakeL | Left brake light on |
-| 0 | 0 | brakeR | Right brake light on |
-| 1 | 7 | reverse | Reverse lights on |
-| 1 | 6 | interior | Interior lights on |
-| 1 | 5 | courtesy | Courtesy lights on |
-| 1 | 4 | drl | DRL active |
-| 1–3 | — | reserved | Future expansion |
-
-### 0x352 — Power State (8B, 500ms)
-
-Relay states and system current monitoring.
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7 | fuelPump | Fuel pump relay on |
-| 0 | 6 | fan1 | Cooling fan 1 on |
-| 0 | 5 | fan2 | Cooling fan 2 (if dual) |
-| 0 | 4 | acClutch | A/C compressor clutch on |
-| 0 | 3 | horn | Horn relay on |
-| 0 | 2 | wiperMotor | Wiper motor on |
-| 0 | 1 | blower | Blower motor on |
-| 0 | 0 | accessory | Accessory power on |
-| 1 | — | fanDuty | Cooling fan PWM duty (0–255 = 0–100%) |
-| 2–3 | — | totalCurrent | Total system current draw (mA, uint16_t) |
-| 4–5 | — | battVoltage | Battery voltage (mV, uint16_t) |
-| 6–7 | — | reserved | Future expansion |
-
-### 0x353 — Cruise Button (4B, on-event)
-
-Cruise control stalk button events. Sent immediately on button press/release.
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7 | onOff | Cruise master on/off |
-| 0 | 6 | set | Set button pressed |
-| 0 | 5 | resume | Resume button pressed |
-| 0 | 4 | accel | Accel (+) button pressed |
-| 0 | 3 | decel | Decel (−) button pressed |
-| 0 | 2 | cancel | Cancel button pressed |
-| 0 | 1:0 | reserved | — |
-| 1–3 | — | reserved | Future expansion |
-
-### 0x354 — A/C State (4B, 500ms)
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7 | clutchOn | A/C compressor clutch engaged |
-| 0 | 6 | driverRequest | Driver A/C request active |
-| 0 | 5 | lowPressure | Low pressure cutout (if wired) |
-| 0 | 4:0 | reserved | — |
-| 1–3 | — | reserved | Future expansion |
-
-### 0x355 — 4WD State (4B, 500ms)
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 3:0 | mode | 0=2HI, 1=A4WD, 2=4HI, 3=4LO, 4=neutral |
-| 0 | 7:4 | reserved | — |
-| 1 | 7 | engaged | Transfer case fully engaged in target mode |
-| 1 | 6 | shifting | Transfer case shift in progress |
-| 1 | 5 | fault | Transfer case fault |
-| 1 | 4 | frontAxle | Front axle actuator engaged |
-| 1 | 3:0 | reserved | — |
-| 2–3 | — | reserved | Future expansion |
-
-### 0x356 — Brake State (4B, 50ms)
-
-Dual brake switch inputs for brake override protection. 50ms rate for safety-critical BOP path.
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7 | switch1 | Brake switch 1 (factory tap) |
-| 0 | 6 | switch2 | Brake switch 2 (dedicated) |
-| 0 | 5 | bopActive | Brake Override Protection active (both switches agree) |
-| 0 | 4 | disagree | Switches disagree (fault condition) |
-| 0 | 3:0 | reserved | — |
-| 1–3 | — | reserved | Future expansion |
-
-### 0x357 — Faults (8B, 1000ms)
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | — | faultCount | Number of active faults |
-| 1 | 7 | overCurrent | System overcurrent detected |
-| 1 | 6 | canTimeout | CAN heartbeat timeout (ECM not responding) |
-| 1 | 5 | brakeDisagree | Brake switch disagreement |
-| 1 | 4 | tcFault | Transfer case fault |
-| 1 | 3 | fanFault | Cooling fan circuit fault |
-| 1 | 2 | fuelPumpFault | Fuel pump circuit fault |
-| 1 | 1 | lightFault | Lighting circuit fault |
-| 1 | 0 | lowVoltage | Battery voltage below threshold |
-| 2–7 | — | reserved | Future fault expansion |
-
-### 0x36F — Heartbeat (2B, 500ms)
+Current lighting output state (actual MOSFET state, not switch position).
 
 | Byte | Field | Description |
 |------|-------|-------------|
-| 0 | moduleId | 0x10 (PDCM) |
-| 1 | status | Status flags (TBD) |
+| 0 | headlights | b7=lowL, b6=lowR, b5=hiL, b4=hiR, b3=turnL, b2=turnR, b1=brakeL, b0=brakeR |
+| 1 | aux_lights | b7=reverse, b6=interior, b5=courtesy, b4=drl |
+| 2–3 | reserved | — |
+
+### 0x352 — Power State (8B, 500ms) — `VehMsgPowerState`
+
+Output states and system monitoring.
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | relay_states | b7=fuelPump, b6=fan1, b5=fan2, b4=acClutch, b3=horn, b2=wiper, b1=blower, b0=accessory |
+| 1 | fan_duty | Cooling fan PWM duty (0–255 = 0–100%) |
+| 2–3 | total_current_mA | Total system current draw (mA, uint16_t LE) |
+| 4–5 | battery_mv | Battery voltage (mV, uint16_t LE) |
+| 6–7 | reserved | — |
+
+### 0x353 — Cruise Button (4B, on-event) — `VehMsgCruiseBtn`
+
+Cruise control stalk button events. Sent immediately on button press.
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | event | 0=set, 1=resume, 2=accel, 3=decel, 4=cancel, 5=on/off |
+| 1 | hold_ms_hi | Hold duration ms (high byte) |
+| 2 | hold_ms_lo | Hold duration ms (low byte) |
+| 3 | reserved | — |
+
+### 0x354 — A/C State (4B, 500ms) — `VehMsgACState`
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | ac_flags | b7=clutchOn, b6=driverRequest, b5=lowPressure |
+| 1–3 | reserved | — |
+
+### 0x355 — 4WD State (4B, 500ms) — `VehMsgFourWDState`
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | mode | Lower nibble: TransferCaseMode enum (0=2HI, 1=A4WD, 2=4HI, 3=Neutral, 4=4LO) |
+| 1 | status | b7=engaged, b6=shifting, b5=fault, b4=frontAxle |
+| 2–3 | reserved | — |
+
+### 0x356 — Brake State (4B, 50ms) — `VehMsgBrakeState`
+
+Dual brake switch inputs for brake override protection. **50ms rate — fastest of any PDCM message.** Safety-critical BOP path.
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | brake_flags | b7=switch1, b6=switch2, b5=bopActive, b4=disagree |
+| 1–3 | reserved | — |
+
+### 0x357 — Faults (8B, 1000ms) — `VehMsgPDCMFaults`
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | fault_count | Number of active faults |
+| 1 | fault_flags | b7=overcurrent, b6=canTimeout, b5=brakeDisagree, b4=tcFault, b3=fanFault, b2=fuelPumpFault, b1=lightFault, b0=lowVoltage |
+| 2–7 | reserved | Future fault expansion |
+
+### 0x36F — Heartbeat (2B, 500ms) — `VehMsgHeartbeat`
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | module_id | 0x10 (PDCM) |
+| 1 | status | HeartbeatStatus enum (0=OK, 1=warning, 2=fault, 0xFF=shutting_down) |
 
 ---
 
 ## Consumed Messages (Vehicle Bus → PDCM)
 
-### 0x360 — Fan Command (from ECM)
-
-Cooling fan speed command. Thermal strategy owned by ECM.
+### 0x360 — Fan Command (4B, on-demand, ECM → PDCM) — `VehMsgFanCmd`
 
 | Byte | Field | Description |
 |------|-------|-------------|
-| 0 | fanDuty | Fan speed 0–255 (0–100%) |
-| 1 | flags | Bit 7: force full speed |
+| 0 | fan_duty | Fan speed 0–255 (0–100%) |
+| 1 | flags | b7=forceFullSpeed |
+| 2–3 | reserved | — |
 
-### 0x361 — Light Command (from HMI)
-
-Lighting mode overrides from HeadUnit touchscreen.
+### 0x361 — Light Command (4B, on-demand, HMI → PDCM) — `VehMsgLightCmd`
 
 | Byte | Field | Description |
 |------|-------|-------------|
-| 0 | mode | Lighting mode (TBD) |
+| 0 | mode | LightMode enum |
 | 1 | flags | Override flags (TBD) |
+| 2–3 | reserved | — |
 
-### 0x362 — 4WD Command (from HMI)
-
-4WD mode request from driver via HeadUnit touchscreen.
-
-| Byte | Field | Description |
-|------|-------|-------------|
-| 0 | targetMode | 0=2HI, 1=A4WD, 2=4HI, 3=4LO, 4=neutral |
-
-### 0x363 — Relay Command (from ECM)
-
-Direct relay control commands.
-
-| Byte | Bits | Field | Description |
-|------|------|-------|-------------|
-| 0 | 7 | fuelPump | Fuel pump relay command |
-| 0 | 6 | acClutch | A/C compressor clutch command |
-| 0 | 5:0 | reserved | — |
-
-### 0x310 — Drive Mode (from ECM)
-
-Active drive mode. Affects fan strategy and other power distribution behavior.
+### 0x362 — 4WD Command (4B, on-demand, HMI → PDCM) — `VehMsgFourWDCmd`
 
 | Byte | Field | Description |
 |------|-------|-------------|
-| 0 | driveMode | Active drive mode enum (from VehicleTypes.h) |
+| 0 | target_mode | TransferCaseMode enum (0=2HI, 1=A4WD, 2=4HI, 3=Neutral, 4=4LO) |
+| 1–3 | reserved | — |
+
+### 0x363 — Relay Command (4B, on-demand, ECM → PDCM) — `VehMsgRelayCmd`
+
+| Byte | Field | Description |
+|------|-------|-------------|
+| 0 | relay_flags | b7=fuelPump, b6=acClutch |
+| 1–3 | reserved | — |
+
+### 0x310 — Drive Mode (8B, on-change, ECM → all) — `VehMsgDriveMode`
+
+Active drive mode. PDCM uses this for fan strategy adjustments.
+
+### 0x31F — ECM Heartbeat (2B, 500ms) — `VehMsgHeartbeat`
+
+ECM alive indicator. If no heartbeat received within 3000ms, PDCM sets CAN_TIMEOUT fault and forces fans to 100%.
+
+---
+
+## CAN Timeout Failsafe States
+
+If ECM heartbeat is lost for >3 seconds:
+
+| Load | Failsafe Action | Rationale |
+|------|-----------------|-----------|
+| Cooling fans | 100% | Prevent engine overheat |
+| Fuel pump | OFF | Prevent fuel flood |
+| Headlights | Maintain current | Don't lose visibility |
+| A/C compressor | OFF | Reduce alternator load |
+| All other outputs | Maintain current | Conservative approach |
 
 ---
 
 ## Safety Notes
 
-- **Brake State (0x356)** runs at 50ms — fastest rate of any PDCM message. This is the safety-critical path for brake override protection (BOP). The ECM uses dual brake switch agreement from this message to force throttle closed.
-- **Fuel pump relay** is shared with ST (Security Teensy in ECM). ST has an independent hardware cutoff path that cannot be overridden by PDCM firmware.
-- **Heartbeat (0x36F)** must transmit every 500ms. Other modules monitor this to detect PDCM failure.
-- **A/C compressor state** reported to ECM for idle-up compensation — ECM raises idle target when A/C is engaged.
+- **Brake State (0x356)** runs at 50ms — fastest rate of any PDCM message. Safety-critical path for brake override protection (BOP). Brake switches are on DIRECT MCU GPIO — never behind SPI/I2C.
+- **Fuel pump** has ECM/ST independent hardware cutoff (cannot be overridden by PDCM firmware).
+- **Seat heaters** have dual MOSFETs in series for fire prevention if primary MOSFET fails short.
+- **Heartbeat (0x36F)** must transmit every 500ms. Other modules monitor for PDCM failure.
+- **A/C compressor state** reported to ECM for idle-up compensation.

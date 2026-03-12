@@ -1,49 +1,96 @@
 # PDCM — Power Distribution & Control Module
 
-A fully custom power distribution and control module for a 1998 Chevy Silverado running custom vehicle electronics. Manages all driver switch inputs, lighting, relay control, power distribution, and 4WD.
+Full solid-state power distribution module for a 1998 Chevy Silverado custom electronics platform. Part of a vehicle-wide CAN FD network alongside the ECM, HeadUnit (HMI), TCM, GCM, and other modules.
 
-## Systems
+## Architecture
 
-| System | Description |
-|--------|-------------|
-| Switch Inputs | Multifunction stalks (turn/cruise), hazard, horn, wiper/washer, HVAC controls, key position |
-| Lighting | Headlights (low/high), turn signals, hazards, brake lights, reverse, interior, DRL |
-| Power Distribution | Fuel pump relay, cooling fans, A/C compressor clutch, horn, wipers, blower, accessory |
-| 4WD Controls | Transfer case encoder motor (NP246/NP261), front axle actuator, indicator |
-| Brake Override | Dual brake switch inputs for brake override protection (BOP) |
+**Zero mechanical relays.** Every output channel uses a TC4427A dual gate driver + IRFZ44N N-channel MOSFET with per-channel current sensing and software overcurrent protection.
+
+| | Count |
+|--|-------|
+| **Output channels** | 47 (+ 1 H-bridge) |
+| **TC4427A gate drivers** | 24 ICs |
+| **IRFZ44N MOSFETs** | ~46 |
+| **DRV8876 H-bridge** | 1 (4WD encoder motor) |
+| **Current sense channels** | 48 |
+| **CAN FD messages** | 9 published, 6 consumed |
+
+### Output Tiers
+
+- **Tier 1 (25 ch)**: PDCM-switched loads — fuel pump, cooling fans, blower, A/C, headlights, turn signals, brake lights, reverse, DRL, interior, horn, wiper, accessory, front axle, seat heaters, light bar, 4WD motor
+- **Tier 2 (5 ch)**: Enable signals — 4× amp remotes, HeadUnit power
+- **Tier 3 (18 ch)**: Sub-loads — ADAS cameras, GCM, GPS, dash cam, auxiliary lighting, expansion
+
+### Safety (3 Layers)
+
+1. **Upstream fuse** per channel (PTC or blade) — protects against MOSFET fails-short
+2. **Firmware fault detection** — overcurrent, open-load, stuck-on, CAN timeout
+3. **Redundant switching** — fuel pump (ECM/ST independent cutoff), seat heaters (dual MOSFETs in series)
+
+### Smart Features
+
+- Headlight soft-start (PWM ramp for halogen inrush)
+- Turn signal flash timer with hazard override
+- Interior/courtesy light PWM fade
+- Welcome/goodbye lighting sequences
+- Fuel pump prime-and-timeout
+- Wiper intermittent timing
+- 4-tier load shedding (voltage-based priority)
+- CAN timeout failsafe (fans → 100%, fuel pump → off)
+- NP246 transfer case state machine with stall detection
+
+## MCU
+
+| | Prototype | Production |
+|--|-----------|------------|
+| **MCU** | Teensy 4.1 (IMXRT1062) | NXP S32K358 |
+| **Core** | Cortex-M7 @ 600MHz | Dual Cortex-M7 @ 240MHz |
+| **CAN** | FlexCAN_T4 | 6× CAN FD (native) |
+| **Safety** | Software watchdog | Hardware lockstep + SWT |
+| **Grade** | — | AEC-Q100 Grade 1 |
+
+Firmware uses a Hardware Abstraction Layer (HAL) — all modules are platform-independent.
 
 ## CAN Bus
 
-The PDCM communicates over a vehicle-wide CAN FD bus (1 Mbps arbitration, 8 Mbps data). The 1998 GMT400 has no factory CAN bus — the entire vehicle network is custom-built.
+Vehicle CAN FD bus: 1 Mbps arbitration, 8 Mbps data, MCP2562FD transceivers.
 
-| Direction | CAN IDs | Messages |
-|-----------|---------|----------|
-| Publishes | 0x350–0x357, 0x36F | 9 messages — switch states, lighting, power, cruise buttons, A/C, 4WD, brake, faults, heartbeat |
-| Consumes | 0x360–0x363, 0x310 | 5 messages — fan command, light command, 4WD command, relay command, drive mode |
+**Module ID**: `0x10` | **CAN Range**: `0x350–0x36F` | **Heartbeat**: `0x36F @ 500ms`
 
-**Module ID**: `0x10` — see `docs/can_protocol.md` for full message definitions.
+## Build
 
-## Vehicle Platform
+```bash
+# Teensy prototype
+pio run -e PDCM
 
-Part of the [silverado-platform](https://github.com/mikeslezak/silverado-platform) vehicle electronics network. The PDCM is a passive executor — it receives commands and reports states but does not make engine control decisions. Boundary defined by ECM ADR-016.
+# Upload
+pio run -e PDCM -t upload
+```
 
-## Hardware
+## Project Structure
 
-- Single Teensy 4.1 (IMXRT1062, 600 MHz Cortex-M7)
-- MCP2562FD CAN FD transceiver
-- High-side switches and relay drivers for power distribution
-- Deutsch DT/DTM automotive connectors
-- Custom PCB (design in progress)
-
-## Firmware
-
-- C++ (Arduino/Teensy framework)
-- Built with PlatformIO (`pio run -e PDCM`)
-- Vehicle CAN contract from [silverado-platform](https://github.com/mikeslezak/silverado-platform) (git submodule at `firmware/platform/`)
+```
+PDCM/
+├── firmware/
+│   ├── hal/           HAL interface + platform implementations
+│   ├── shared/        PDCMConfig.h, PDCMTypes.h
+│   ├── src/           All firmware modules + main.cpp
+│   └── platform/      silverado-platform submodule
+├── hardware/
+│   ├── schematic/     Schematic files
+│   ├── pcb/           PCB layout
+│   ├── datasheets/    Component datasheets
+│   └── bom/           Bill of materials
+├── docs/              CAN protocol, pin allocation, schematic notes
+├── DECISIONS.md       Architecture decision records (ADR-001–008)
+├── TODO.md            Development phases and work items
+└── platformio.ini     Build configuration
+```
 
 ## Current Phase
 
-**Phase 1 — Hardware Design**
+**Phase 2 — Firmware Architecture**: Complete. All 13 firmware modules, HAL, and 8 ADRs written.
+**Phase 3 — Hardware Design**: Next. Schematic design in progress.
 
 ## Author
 
