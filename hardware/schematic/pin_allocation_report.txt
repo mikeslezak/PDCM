@@ -1,0 +1,362 @@
+================================================================================
+  S32K358 HDQFP-172 Pin Allocation Report -- PDCM
+  Generated: 2026-03-13 11:33
+  Source: NXP S32K358 IOMUX spreadsheet
+================================================================================
+
+SUMMARY
+----------------------------------------
+  Total pins assigned:    120
+  PWM outputs (eMIOS1):   14
+  Gate driver GPIO out:   34
+  H-bridge control:       2
+  Switch inputs:          15
+  ADC inputs:             49
+  CAN FD:                 2
+  JTAG:                   4
+
+DEDICATED PINS (not GPIO)
+----------------------------------------
+  EXTAL  -- pad  23  Crystal input
+  XTAL   -- pad  25  Crystal output
+  nRESET -- dedicated Reset
+  VREFH  -- pad  16  ADC reference high
+  VREFL  -- pad  17  ADC reference low
+
+JTAG / DEBUG
+----------------------------------------
+  JTAG_TCK     -- PTC4   pad 166
+  JTAG_TDI     -- PTC5   pad 165
+  JTAG_TDO     -- PTA10  pad 161
+  JTAG_TMS     -- PTA4   pad 170
+
+CAN FD
+----------------------------------------
+  CAN0_TX      -- PTC3   pad  49  (ALT3)
+  CAN0_RX      -- PTC2   pad  50  (IMCR)
+
+PWM OUTPUTS (eMIOS1)
+--------------------------------------------------------------------------------
+  Signal               Pin       Pad  eMIOS1 Ch    ALT    Suffix
+  ------------------   ------   ----  ----------   ----   ------
+  FAN_1                PTC12      83  CH[ 2]       ALT2   H
+  FAN_2                PTC13      81  CH[ 3]       ALT2   H
+  BLOWER               PTC14      71  CH[ 4]       ALT5   H
+  LOW_BEAM_L           PTE12      29  CH[ 5]       ALT4   H
+  LOW_BEAM_R           PTC28      96  CH[ 7]       ALT2   H
+  HIGH_BEAM_L          PTC16      66  CH[ 9]       ALT2   H
+  HIGH_BEAM_R          PTB4       48  CH[10]       ALT6   H
+  DRL                  PTA28      30  CH[11]       ALT2   H
+  INTERIOR             PTA29      32  CH[12]       ALT2   H
+  COURTESY             PTD15      35  CH[14]       ALT3   H
+  SEAT_HEATER_L        PTD16      34  CH[15]       ALT5   H
+  SEAT_HEATER_R        PTB20      44  CH[16]       ALT2   X
+  HBRIDGE_IN1          PTB21      45  CH[17]       ALT2   Y
+  HBRIDGE_IN2          PTB22      67  CH[18]       ALT2   Y
+
+NON-PWM GATE DRIVER OUTPUTS (GPIO)
+------------------------------------------------------------
+  Signal               Pin       Pad  ADC on pin?
+  ------------------   ------   ----  ----------
+  FUEL_PUMP            PTC1       61  no
+  AC_CLUTCH            PTC0       62  no
+  TURN_L               PTD9       63  no
+  TURN_R               PTD8       64  no
+  BRAKE_L              PTC17      65  no
+  BRAKE_R              PTC15      68  no
+  REVERSE              PTB23      69  no
+  HORN                 PTB24      70  no
+  WIPER                PTB25      72  no
+  ACCESSORY            PTB26      73  no
+  FRONT_AXLE           PTB3       74  no
+  LIGHT_BAR            PTB27      75  no
+  AMP_REMOTE_1         PTB28      76  no
+  AMP_REMOTE_2         PTB29      80  no
+  HEADUNIT_EN          PTC18      82  no
+  CAM_FRONT            PTC19      84  no
+  CAM_REAR             PTC20      85  no
+  CAM_SIDE             PTC21      86  no
+  PARK_SENS            PTC27      93  no
+  RADAR_BSM            PTC29      99  no
+  GCM_POWER            PTC30     101  no
+  GPS_CELL             PTA5      167  no
+  DASH_CAM             PTA18       1  YES
+  FUTURE_MOD           PTA19       2  YES
+  ROCK_LIGHTS          PTA20       3  YES
+  BED_LIGHTS           PTE16       4  YES
+  PUDDLE_LIGHTS        PTE15       5  YES
+  FUTURE_EXT           PTA21       6  YES
+  EXPANSION_1          PTD1        7  YES
+  EXPANSION_2          PTD0        8  YES
+  EXPANSION_3          PTE11       9  YES
+  EXPANSION_4          PTE10      10  YES
+  EXPANSION_5          PTE13      11  YES
+  EXPANSION_6          PTE5       12  YES
+
+H-BRIDGE CONTROL
+------------------------------------------------------------
+  HBRIDGE_NSLEEP       PTD17    pad  31  (GPIO_OUT)
+  HBRIDGE_NFAULT       PTA24    pad  14  (GPIO_IN)
+
+SWITCH INPUTS (GPIO)
+------------------------------------------------------------
+  Signal               Pin       Pad
+  ------------------   ------   ----
+  SW_TURN_L            PTA25      15
+  SW_TURN_R            PTD14      40
+  SW_HIGH_BEAM         PTD13      41
+  SW_FLASH_PASS        PTB18      42
+  SW_HAZARD            PTB19      43
+  SW_HORN              PTE8       46
+  SW_REVERSE           PTB5       47
+  SW_AC_REQ            PTD7       51
+  SW_WIPER_INT         PTD6       52
+  SW_WIPER_LO          PTD5       53
+  SW_WIPER_HI          PTD12      54
+  SW_WASHER            PTD11      55
+  BRAKE_SW1            PTA30      33
+  BRAKE_SW2            PTA31      39
+  SW_START_BTN         PTD10      56
+
+ADC INPUTS (49 total: 46 current sense + 3 sensor)
+--------------------------------------------------------------------------------
+  Signal               Pin       Pad  ADC Instance   Channel
+  ------------------   ------   ----  ------------   ------------
+
+  Current Sense:
+  CS_FUEL_PUMP         PTE4       13  ADC2           ADC2_S9
+  CS_FAN_1             PTC23      87  ADC2           ADC2_S23
+  CS_FAN_2             PTC24      88  ADC2           ADC2_S22
+  CS_BLOWER            PTC25      89  ADC0           ADC0_S20
+  CS_AC_CLUTCH         PTC11      90  ADC0           ADC0_S17
+  CS_LOW_BEAM_L        PTC26      91  ADC0           ADC0_S21
+  CS_LOW_BEAM_R        PTC10      92  ADC1           ADC1_X[3]
+  CS_HIGH_BEAM_L       PTB1       94  ADC0           ADC0_S15
+  CS_HIGH_BEAM_R       PTB0       95  ADC0           ADC0_S14
+  CS_TURN_L            PTC9       97  ADC0           ADC0_S13
+  CS_TURN_R            PTC8       98  ADC0           ADC0_S12
+  CS_BRAKE_L           PTA7      100  ADC0           ADC0_S11
+  CS_BRAKE_R           PTA6      102  ADC0           ADC0_S18
+  CS_REVERSE           PTC31     103  ADC2           ADC2_S21
+  CS_DRL               PTE7      104  ADC2           ADC2_S20
+  CS_INTERIOR          PTA17     109  ADC2           ADC2_S19
+  CS_COURTESY          PTB17     110  ADC1           ADC1_X[2]
+  CS_HORN              PTD20     111  ADC0           ADC0_S22
+  CS_WIPER             PTB16     112  ADC1           ADC1_S12
+  CS_ACCESSORY         PTB15     113  ADC1           ADC1_S11
+  CS_FRONT_AXLE        PTB14     114  ADC0           ADC0_S9
+  CS_SEAT_HEATER_L     PTD21     115  ADC0           ADC0_S23
+  CS_SEAT_HEATER_R     PTB13     116  ADC0           ADC0_S8
+  CS_LIGHT_BAR         PTB12     117  ADC1           ADC1_X[1]
+  CS_AMP_REMOTE_1      PTD22     118  ADC2           ADC2_S18
+  CS_AMP_REMOTE_2      PTD4      119  ADC0           ADC0_S19
+  CS_HEADUNIT_EN       PTD3      120  ADC0           ADC0_S10
+  CS_CAM_FRONT         PTD2      121  ADC0           ADC0_S16
+  CS_CAM_REAR          PTD23     122  ADC2           ADC2_S17
+  CS_CAM_SIDE          PTA3      123  ADC1           ADC1_S17
+  CS_PARK_SENS         PTA2      124  ADC1           ADC1_X[0]
+  CS_RADAR_BSM         PTD24     125  ADC1           ADC1_S20
+  CS_GCM_POWER         PTB11     126  ADC0           ADC0_X[3]
+  CS_GPS_CELL          PTB10     129  ADC0           ADC0_X[2]
+  CS_DASH_CAM          PTB9      130  ADC0           ADC0_X[1]
+  CS_FUTURE_MOD        PTD26     131  ADC2           ADC2_S16
+  CS_ROCK_LIGHTS       PTD27     132  ADC1           ADC1_S21
+  CS_BED_LIGHTS        PTB8      133  ADC0           ADC0_X[0]
+  CS_PUDDLE_LIGHTS     PTD28     134  ADC1           ADC1_S22
+  CS_FUTURE_EXT        PTD29     136  ADC1           ADC1_S23
+  CS_EXPANSION_1       PTD30     138  ADC2           ADC2_S15
+  CS_EXPANSION_2       PTD31     139  ADC2           ADC2_S14
+  CS_EXPANSION_3       PTC7      140  ADC1           ADC1_S16
+  CS_EXPANSION_4       PTC6      141  ADC1           ADC1_S18
+  CS_EXPANSION_5       PTE17     142  ADC2           ADC2_S10
+  CS_EXPANSION_6       PTA16     143  ADC1           ADC1_S13
+
+  Sensors:
+  BATT_ADC             PTE18     144  ADC2           ADC2_S11
+  4WD_ADC              PTA15     145  ADC1           ADC1_P7
+  HB_CS_ADC            PTE6      146  ADC1           ADC1_P6
+
+ADC DISTRIBUTION BY INSTANCE
+----------------------------------------
+  ADC0: 20 channels
+  ADC1: 16 channels
+  ADC2: 13 channels
+
+UNASSIGNED PINS
+------------------------------------------------------------
+  17 pins unassigned:
+    PTA1     pad 135 (ADC capable)
+    PTA0     pad 137 (ADC capable)
+    PTE2     pad 147 (ADC capable)
+    PTA14    pad 152 (ADC capable)
+    PTE21    pad 153 (ADC capable)
+    PTE22    pad 154 (ADC capable)
+    PTA13    pad 155 (ADC capable)
+    PTE23    pad 156 (ADC capable)
+    PTE24    pad 157 (ADC capable)
+    PTE25    pad 158 (ADC capable)
+    PTA12    pad 159 (ADC capable)
+    PTA11    pad 160 (ADC capable)
+    PTE1     pad 162 (ADC capable)
+    PTE0     pad 163 (ADC capable)
+    PTE26    pad 164 (ADC capable)
+    PTA9     pad 171 (ADC capable)
+    PTA8     pad 172 (ADC capable)
+
+COMPLETE PORT-BY-PORT ALLOCATION
+================================================================================
+
+Port PTA:
+  Pin       Pad  Assignment                     Function             ADC?
+  ------   ----  ----------------------------   ------------------   ----
+  PTA0      137  (unassigned)                                        ADC
+  PTA1      135  (unassigned)                                        ADC
+  PTA2      124  ADC_CS_PARK_SENS               ADC1_X[0]            ADC
+  PTA3      123  ADC_CS_CAM_SIDE                ADC1_S17             ADC
+  PTA5      167  GATE_GPS_CELL                  GPIO_OUT             
+  PTA6      102  ADC_CS_BRAKE_R                 ADC0_S18             ADC
+  PTA7      100  ADC_CS_BRAKE_L                 ADC0_S11             ADC
+  PTA8      172  (unassigned)                                        ADC
+  PTA9      171  (unassigned)                                        ADC
+  PTA10     161  JTAG_TDO                       JTAG                 
+  PTA11     160  (unassigned)                                        ADC
+  PTA12     159  (unassigned)                                        ADC
+  PTA13     155  (unassigned)                                        ADC
+  PTA14     152  (unassigned)                                        ADC
+  PTA15     145  ADC_4WD_ADC                    ADC1_P7              ADC
+  PTA16     143  ADC_CS_EXPANSION_6             ADC1_S13             ADC
+  PTA17     109  ADC_CS_INTERIOR                ADC2_S19             ADC
+  PTA18       1  GATE_DASH_CAM                  GPIO_OUT             ADC
+  PTA19       2  GATE_FUTURE_MOD                GPIO_OUT             ADC
+  PTA20       3  GATE_ROCK_LIGHTS               GPIO_OUT             ADC
+  PTA21       6  GATE_FUTURE_EXT                GPIO_OUT             ADC
+  PTA24      14  HBRIDGE_NFAULT                 GPIO_IN              
+  PTA25      15  SW_TURN_L                      GPIO_IN              
+  PTA28      30  PWM_DRL                        eMIOS_1_CH[11]_H     
+  PTA29      32  PWM_INTERIOR                   eMIOS_1_CH[12]_H     
+  PTA30      33  BRAKE_SW1                      GPIO_IN              
+  PTA31      39  BRAKE_SW2                      GPIO_IN              
+
+Port PTB:
+  Pin       Pad  Assignment                     Function             ADC?
+  ------   ----  ----------------------------   ------------------   ----
+  PTB0       95  ADC_CS_HIGH_BEAM_R             ADC0_S14             ADC
+  PTB1       94  ADC_CS_HIGH_BEAM_L             ADC0_S15             ADC
+  PTB3       74  GATE_FRONT_AXLE                GPIO_OUT             
+  PTB4       48  PWM_HIGH_BEAM_R                eMIOS_1_CH[10]_H     
+  PTB5       47  SW_REVERSE                     GPIO_IN              
+  PTB8      133  ADC_CS_BED_LIGHTS              ADC0_X[0]            ADC
+  PTB9      130  ADC_CS_DASH_CAM                ADC0_X[1]            ADC
+  PTB10     129  ADC_CS_GPS_CELL                ADC0_X[2]            ADC
+  PTB11     126  ADC_CS_GCM_POWER               ADC0_X[3]            ADC
+  PTB12     117  ADC_CS_LIGHT_BAR               ADC1_X[1]            ADC
+  PTB13     116  ADC_CS_SEAT_HEATER_R           ADC0_S8              ADC
+  PTB14     114  ADC_CS_FRONT_AXLE              ADC0_S9              ADC
+  PTB15     113  ADC_CS_ACCESSORY               ADC1_S11             ADC
+  PTB16     112  ADC_CS_WIPER                   ADC1_S12             ADC
+  PTB17     110  ADC_CS_COURTESY                ADC1_X[2]            ADC
+  PTB18      42  SW_FLASH_PASS                  GPIO_IN              
+  PTB19      43  SW_HAZARD                      GPIO_IN              
+  PTB20      44  PWM_SEAT_HEATER_R              eMIOS_1_CH[16]_X     
+  PTB21      45  PWM_HBRIDGE_IN1                eMIOS_1_CH[17]_Y     
+  PTB22      67  PWM_HBRIDGE_IN2                eMIOS_1_CH[18]_Y     
+  PTB23      69  GATE_REVERSE                   GPIO_OUT             
+  PTB24      70  GATE_HORN                      GPIO_OUT             
+  PTB25      72  GATE_WIPER                     GPIO_OUT             
+  PTB26      73  GATE_ACCESSORY                 GPIO_OUT             
+  PTB27      75  GATE_LIGHT_BAR                 GPIO_OUT             
+  PTB28      76  GATE_AMP_REMOTE_1              GPIO_OUT             
+  PTB29      80  GATE_AMP_REMOTE_2              GPIO_OUT             
+
+Port PTC:
+  Pin       Pad  Assignment                     Function             ADC?
+  ------   ----  ----------------------------   ------------------   ----
+  PTC0       62  GATE_AC_CLUTCH                 GPIO_OUT             
+  PTC1       61  GATE_FUEL_PUMP                 GPIO_OUT             
+  PTC2       50  CAN0_RX                        CAN0_RX              
+  PTC3       49  CAN0_TX                        CAN0_TX              
+  PTC6      141  ADC_CS_EXPANSION_4             ADC1_S18             ADC
+  PTC7      140  ADC_CS_EXPANSION_3             ADC1_S16             ADC
+  PTC8       98  ADC_CS_TURN_R                  ADC0_S12             ADC
+  PTC9       97  ADC_CS_TURN_L                  ADC0_S13             ADC
+  PTC10      92  ADC_CS_LOW_BEAM_R              ADC1_X[3]            ADC
+  PTC11      90  ADC_CS_AC_CLUTCH               ADC0_S17             ADC
+  PTC12      83  PWM_FAN_1                      eMIOS_1_CH[2]_H      
+  PTC13      81  PWM_FAN_2                      eMIOS_1_CH[3]_H      
+  PTC14      71  PWM_BLOWER                     eMIOS_1_CH[4]_H      
+  PTC15      68  GATE_BRAKE_R                   GPIO_OUT             
+  PTC16      66  PWM_HIGH_BEAM_L                eMIOS_1_CH[9]_H      
+  PTC17      65  GATE_BRAKE_L                   GPIO_OUT             
+  PTC18      82  GATE_HEADUNIT_EN               GPIO_OUT             
+  PTC19      84  GATE_CAM_FRONT                 GPIO_OUT             
+  PTC20      85  GATE_CAM_REAR                  GPIO_OUT             
+  PTC21      86  GATE_CAM_SIDE                  GPIO_OUT             
+  PTC23      87  ADC_CS_FAN_1                   ADC2_S23             ADC
+  PTC24      88  ADC_CS_FAN_2                   ADC2_S22             ADC
+  PTC25      89  ADC_CS_BLOWER                  ADC0_S20             ADC
+  PTC26      91  ADC_CS_LOW_BEAM_L              ADC0_S21             ADC
+  PTC27      93  GATE_PARK_SENS                 GPIO_OUT             
+  PTC28      96  PWM_LOW_BEAM_R                 eMIOS_1_CH[7]_H      
+  PTC29      99  GATE_RADAR_BSM                 GPIO_OUT             
+  PTC30     101  GATE_GCM_POWER                 GPIO_OUT             
+  PTC31     103  ADC_CS_REVERSE                 ADC2_S21             ADC
+
+Port PTD:
+  Pin       Pad  Assignment                     Function             ADC?
+  ------   ----  ----------------------------   ------------------   ----
+  PTD0        8  GATE_EXPANSION_2               GPIO_OUT             ADC
+  PTD1        7  GATE_EXPANSION_1               GPIO_OUT             ADC
+  PTD2      121  ADC_CS_CAM_FRONT               ADC0_S16             ADC
+  PTD3      120  ADC_CS_HEADUNIT_EN             ADC0_S10             ADC
+  PTD4      119  ADC_CS_AMP_REMOTE_2            ADC0_S19             ADC
+  PTD5       53  SW_WIPER_LO                    GPIO_IN              
+  PTD6       52  SW_WIPER_INT                   GPIO_IN              
+  PTD7       51  SW_AC_REQ                      GPIO_IN              
+  PTD8       64  GATE_TURN_R                    GPIO_OUT             
+  PTD9       63  GATE_TURN_L                    GPIO_OUT             
+  PTD10      56  SW_START_BTN                   GPIO_IN              
+  PTD11      55  SW_WASHER                      GPIO_IN              
+  PTD12      54  SW_WIPER_HI                    GPIO_IN              
+  PTD13      41  SW_HIGH_BEAM                   GPIO_IN              
+  PTD14      40  SW_TURN_R                      GPIO_IN              
+  PTD15      35  PWM_COURTESY                   eMIOS_1_CH[14]_H     
+  PTD16      34  PWM_SEAT_HEATER_L              eMIOS_1_CH[15]_H     
+  PTD17      31  HBRIDGE_NSLEEP                 GPIO_OUT             
+  PTD20     111  ADC_CS_HORN                    ADC0_S22             ADC
+  PTD21     115  ADC_CS_SEAT_HEATER_L           ADC0_S23             ADC
+  PTD22     118  ADC_CS_AMP_REMOTE_1            ADC2_S18             ADC
+  PTD23     122  ADC_CS_CAM_REAR                ADC2_S17             ADC
+  PTD24     125  ADC_CS_RADAR_BSM               ADC1_S20             ADC
+  PTD26     131  ADC_CS_FUTURE_MOD              ADC2_S16             ADC
+  PTD27     132  ADC_CS_ROCK_LIGHTS             ADC1_S21             ADC
+  PTD28     134  ADC_CS_PUDDLE_LIGHTS           ADC1_S22             ADC
+  PTD29     136  ADC_CS_FUTURE_EXT              ADC1_S23             ADC
+  PTD30     138  ADC_CS_EXPANSION_1             ADC2_S15             ADC
+  PTD31     139  ADC_CS_EXPANSION_2             ADC2_S14             ADC
+
+Port PTE:
+  Pin       Pad  Assignment                     Function             ADC?
+  ------   ----  ----------------------------   ------------------   ----
+  PTE0      163  (unassigned)                                        ADC
+  PTE1      162  (unassigned)                                        ADC
+  PTE2      147  (unassigned)                                        ADC
+  PTE4       13  ADC_CS_FUEL_PUMP               ADC2_S9              ADC
+  PTE5       12  GATE_EXPANSION_6               GPIO_OUT             ADC
+  PTE6      146  ADC_HB_CS_ADC                  ADC1_P6              ADC
+  PTE7      104  ADC_CS_DRL                     ADC2_S20             ADC
+  PTE8       46  SW_HORN                        GPIO_IN              
+  PTE10      10  GATE_EXPANSION_4               GPIO_OUT             ADC
+  PTE11       9  GATE_EXPANSION_3               GPIO_OUT             ADC
+  PTE12      29  PWM_LOW_BEAM_L                 eMIOS_1_CH[5]_H      
+  PTE13      11  GATE_EXPANSION_5               GPIO_OUT             ADC
+  PTE15       5  GATE_PUDDLE_LIGHTS             GPIO_OUT             ADC
+  PTE16       4  GATE_BED_LIGHTS                GPIO_OUT             ADC
+  PTE17     142  ADC_CS_EXPANSION_5             ADC2_S10             ADC
+  PTE18     144  ADC_BATT_ADC                   ADC2_S11             ADC
+  PTE21     153  (unassigned)                                        ADC
+  PTE22     154  (unassigned)                                        ADC
+  PTE23     156  (unassigned)                                        ADC
+  PTE24     157  (unassigned)                                        ADC
+  PTE25     158  (unassigned)                                        ADC
+  PTE26     164  (unassigned)                                        ADC
+

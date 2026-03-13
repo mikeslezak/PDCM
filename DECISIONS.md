@@ -57,15 +57,18 @@ All 47 output channels use TC4427A dual gate driver + N-channel MOSFET. Same pro
 
 ---
 
-## ADR-003: 47-Channel Output Allocation (Three Tiers)
+## ADR-003: 47-Channel Output Allocation (Two Shunt Sizes)
 
 **Date**: 2026-03-11
+**Updated**: 2026-03-12
 **Status**: Accepted
+
+Channels are **generic pools** — any channel of the right shunt size can drive any matching load. Load-to-channel assignment happens at install time (firmware config + fuse selection). See ADR-010.
 
 ### Tier 0 — Always Hot (own battery feed, PDCM cannot control)
 - ECM (safety-critical, independent power)
 - PDCM itself (own fused battery feed)
-- Starter motor (direct from ignition switch)
+- Starter solenoid — controlled by PDCM via any available 10mΩ output channel, triggered by push-button start state machine (see ADR-011)
 
 ### Tier 1 — PDCM Switched (25 channels, current through MOSFETs)
 
@@ -76,22 +79,22 @@ All 47 output channels use TC4427A dual gate driver + N-channel MOSFET. Same pro
 | 3 | Cooling fan 2 | IRFZ44N | 10mΩ | PWM variable speed |
 | 4 | Blower motor | IRFZ44N | 10mΩ | PWM variable speed |
 | 5 | A/C compressor clutch | IRFZ44N | 10mΩ | Reports to ECM for idle-up |
-| 6 | Low beam left | IRFZ44N | 50mΩ | PWM soft-start |
-| 7 | Low beam right | IRFZ44N | 50mΩ | PWM soft-start |
-| 8 | High beam left | IRFZ44N | 50mΩ | PWM soft-start |
-| 9 | High beam right | IRFZ44N | 50mΩ | PWM soft-start |
-| 10 | Turn signal left | IRFZ44N | 100mΩ | Flash timer |
-| 11 | Turn signal right | IRFZ44N | 100mΩ | Flash timer |
-| 12 | Brake light left | IRFZ44N | 100mΩ | Direct from brake GPIO |
-| 13 | Brake light right | IRFZ44N | 100mΩ | Direct from brake GPIO |
-| 14 | Reverse lights | IRFZ44N | 100mΩ | |
-| 15 | DRL | IRFZ44N | 100mΩ | PWM dimming |
-| 16 | Interior light | IRFZ44N | 100mΩ | PWM fade |
-| 17 | Courtesy light | IRFZ44N | 100mΩ | PWM fade |
-| 18 | Horn | IRFZ44N | 50mΩ | Direct from switch |
-| 19 | Wiper motor | IRFZ44N | 50mΩ | Intermittent timing |
-| 20 | Accessory power | IRFZ44N | 50mΩ | Key-switched |
-| 21 | Front axle actuator | IRFZ44N | 100mΩ | 4WD engage/disengage |
+| 6 | Low beam left | IRFZ44N | 10mΩ | PWM soft-start |
+| 7 | Low beam right | IRFZ44N | 10mΩ | PWM soft-start |
+| 8 | High beam left | IRFZ44N | 10mΩ | PWM soft-start |
+| 9 | High beam right | IRFZ44N | 10mΩ | PWM soft-start |
+| 10 | Turn signal left | IRFZ44N | 10mΩ | Flash timer |
+| 11 | Turn signal right | IRFZ44N | 10mΩ | Flash timer |
+| 12 | Brake light left | IRFZ44N | 10mΩ | Direct from brake GPIO |
+| 13 | Brake light right | IRFZ44N | 10mΩ | Direct from brake GPIO |
+| 14 | Reverse lights | IRFZ44N | 10mΩ | |
+| 15 | DRL | IRFZ44N | 10mΩ | PWM dimming |
+| 16 | Interior light | IRFZ44N | 10mΩ | PWM fade |
+| 17 | Courtesy light | IRFZ44N | 10mΩ | PWM fade |
+| 18 | Horn | IRFZ44N | 10mΩ | Direct from switch |
+| 19 | Wiper motor | IRFZ44N | 10mΩ | Intermittent timing |
+| 20 | Accessory power | IRFZ44N | 10mΩ | Key-switched |
+| 21 | Front axle actuator | IRFZ44N | 10mΩ | 4WD engage/disengage |
 | 22 | Seat heater left | IRFZ44N | 10mΩ | PWM temperature control |
 | 23 | Seat heater right | IRFZ44N | 10mΩ | PWM temperature control |
 | 24 | Light bar | IRFZ44N | 10mΩ | High current, switched |
@@ -99,37 +102,37 @@ All 47 output channels use TC4427A dual gate driver + N-channel MOSFET. Same pro
 
 ### Tier 2 — PDCM Enable (low-current turn-on signal, load has own battery feed)
 
-| Ch | Load | MOSFET | Notes |
-|----|------|--------|-------|
-| 26 | Amp remote #1 | IRFZ44N | SQ system amp 1 |
-| 27 | Amp remote #2 | IRFZ44N | SQ system amp 2 |
-| 28 | Amp remote #3 | IRFZ44N | SQ system amp 3 |
-| 29 | Amp remote #4 | IRFZ44N | SQ system amp 4 |
-| 30 | HeadUnit enable | IRFZ44N | Jetson Orin Nano |
+| Ch | Load | MOSFET | Shunt | Notes |
+|----|------|--------|-------|-------|
+| 26 | Amp remote #1 | IRFZ44N | 50mΩ | SQ system amp 1 |
+| 27 | Amp remote #2 | IRFZ44N | 50mΩ | SQ system amp 2 |
+| 28 | HeadUnit enable | IRFZ44N | 50mΩ | Jetson Orin Nano |
 
-### Tier 3 — Individually Switched Sub-Loads
+### Tier 3 — Individually Switched Sub-Loads + Expansion
 
 | Ch | Load | MOSFET | Shunt | Group |
 |----|------|--------|-------|-------|
-| 31 | Front camera | IRFZ44N | 100mΩ | ADAS |
-| 32 | Rear camera | IRFZ44N | 100mΩ | ADAS |
-| 33 | Side cameras (pair) | IRFZ44N | 100mΩ | ADAS |
-| 34 | Parking sensor array | IRFZ44N | 100mΩ | ADAS |
-| 35 | Radar / blind spot | IRFZ44N | 100mΩ | ADAS |
-| 36 | Gauge cluster (GCM) | IRFZ44N | 100mΩ | Modules |
-| 37 | GPS / cellular | IRFZ44N | 100mΩ | Modules |
-| 38 | Dash cam | IRFZ44N | 100mΩ | Modules |
-| 39 | Future module | IRFZ44N | 100mΩ | Modules |
-| 40 | Rock lights | IRFZ44N | 50mΩ | Exterior |
-| 41 | Bed lights | IRFZ44N | 100mΩ | Exterior |
-| 42 | Puddle / underbody | IRFZ44N | 100mΩ | Exterior |
-| 43 | Future exterior | IRFZ44N | 100mΩ | Exterior |
-| 44 | Expansion 1 | IRFZ44N | 100mΩ | Spare |
-| 45 | Expansion 2 | IRFZ44N | 100mΩ | Spare |
-| 46 | Expansion 3 | IRFZ44N | 100mΩ | Spare |
-| 47 | Expansion 4 | IRFZ44N | 100mΩ | Spare |
+| 29 | Front camera | IRFZ44N | 10mΩ | ADAS |
+| 30 | Rear camera | IRFZ44N | 10mΩ | ADAS |
+| 31 | Side cameras (pair) | IRFZ44N | 10mΩ | ADAS |
+| 32 | Parking sensor array | IRFZ44N | 10mΩ | ADAS |
+| 33 | Radar / blind spot | IRFZ44N | 10mΩ | ADAS |
+| 34 | Gauge cluster (GCM) | IRFZ44N | 10mΩ | Modules |
+| 35 | GPS / cellular | IRFZ44N | 10mΩ | Modules |
+| 36 | Dash cam | IRFZ44N | 10mΩ | Modules |
+| 37 | Future module | IRFZ44N | 10mΩ | Modules |
+| 38 | Rock lights | IRFZ44N | 10mΩ | Exterior |
+| 39 | Bed lights | IRFZ44N | 10mΩ | Exterior |
+| 40 | Puddle / underbody | IRFZ44N | 10mΩ | Exterior |
+| 41 | Future exterior | IRFZ44N | 50mΩ | Exterior |
+| 42 | Expansion 1 | IRFZ44N | 50mΩ | Spare |
+| 43 | Expansion 2 | IRFZ44N | 50mΩ | Spare |
+| 44 | Expansion 3 | IRFZ44N | 50mΩ | Spare |
+| 45 | Expansion 4 | IRFZ44N | 50mΩ | Spare |
+| 46 | Expansion 5 | IRFZ44N | 50mΩ | Spare |
+| 47 | Expansion 6 | IRFZ44N | 50mΩ | Spare |
 
-**Total: 47 TC4427A-driven channels + 1 H-bridge IC (DRV8876) = 48 switched outputs**
+**Shunt summary: 10mΩ × 36 channels + 50mΩ × 10 channels + 1 H-bridge (built-in sense) = 47**
 **TC4427A count: 24 ICs** (47 channels ÷ 2 outputs per IC, rounded up) — ~$30
 **Upstream fuse count: 47** (PTC resettable or blade, per channel)
 
@@ -138,12 +141,14 @@ All 47 output channels use TC4427A dual gate driver + N-channel MOSFET. Same pro
 ## ADR-004: Per-Channel Current Sensing
 
 **Date**: 2026-03-11
+**Updated**: 2026-03-12
 **Status**: Accepted
 
-Low-side shunt resistor on every output channel. Shunt values sized per channel:
-- **10mΩ** — heavy loads (fuel pump, fans, blower, A/C, seat heaters, light bar)
-- **50mΩ** — medium loads (headlights, horn, wiper, accessory, rock lights)
-- **100mΩ** — light loads (turn signals, brake lights, reverse, DRL, interior, cameras, modules)
+Low-side shunt resistor on every output channel. Two shunt sizes (see ADR-010):
+- **10mΩ × 36 channels** — heavy loads (1–16A measurement range)
+- **50mΩ × 10 channels** — light loads / enable signals (0.3–3.3A range)
+
+**Current sense amplifier:** INA180A1 (gain = 20) universal across all channels. Single gain variant simplifies BOM and eliminates per-tier part number tracking.
 
 **Implementation**: Direct ADC — S32K358 has 2× SAR ADC instances with 40+ external channels. Every shunt gets its own dedicated ADC channel. No analog MUX needed.
 
@@ -294,3 +299,126 @@ Skip the Teensy 4.1 prototype phase entirely. Build PDCM hardware directly aroun
 - Prototyping on Teensy then porting wastes a full development cycle
 - The hardware is dramatically simpler on S32K358 (fewer ICs, no SPI bus)
 - Firmware is HAL-abstracted — modules don't care which MCU runs them
+
+---
+
+## ADR-010: Universal Output Circuit — Two Shunt Sizes
+
+**Date**: 2026-03-12
+**Status**: Accepted
+
+All 46 TC4427A output circuits are identical: GPIO → TC4427A → 100Ω → IRFZ44N gate (10kΩ pulldown), low-side shunt → INA180A1 (gain 20) → ADC. The **only** variable is the shunt resistor value.
+
+**Two shunt tiers:**
+- **10mΩ × 36 channels** — Heavy loads, 1–16A measurement range (Ch 0–23, 28–39)
+- **50mΩ × 10 channels** — Light loads / enable signals, 0.3–3.3A range (Ch 25–27, 40–46)
+
+**Eliminated:**
+- **100mΩ tier removed entirely** — No sub-1A loads that need precision current sensing on PDCM. Sensors and low-power modules get power from their own dedicated circuits, not PDCM switched channels.
+
+**Current sense amplifier:**
+- INA180A1 (gain = 20) universal across all channels. No per-tier gain variants.
+- 10mΩ × 16A × 20 = 3.2V output → within 3.3V ADC reference ✓
+- 50mΩ × 3.3A × 20 = 3.3V output → at ADC ceiling ✓
+
+**Channel philosophy:**
+- Channels are **generic pools** — any channel of the right shunt size can drive any matching load
+- Load-to-channel assignment happens at install time (firmware config + fuse selection)
+- Fuse in holder provides hard current limit, firmware provides soft protection
+- If more channels of a size are needed → build an expansion board (same circuit)
+
+**Door motors (windows, locks, mirrors):**
+Handled by future satellite PDCMs, not the main board. Main PDCM keeps just 1 H-bridge (4WD transfer case).
+
+**Rationale:**
+- Universal circuit = one layout block replicated 46×, fewer BOM line items, simpler assembly
+- Two shunt sizes cover the full load spectrum without wasted ADC resolution
+- 100mΩ was only needed for sub-1A precision — those loads don't exist on PDCM
+- Generic pools decouple PCB design from specific vehicle wiring — adapt at install time
+
+---
+
+## ADR-011: Push-Button Start (Keyless Ignition)
+
+**Date**: 2026-03-12
+**Status**: Accepted
+
+**Decision:**
+Replace key ignition switch with push-button start. PDCM reads a simple momentary button via GPIO (conditioned like all other switch inputs). Authentication is handled entirely upstream.
+
+**Physical interface:**
+- Push button → PDCM switch input (SW_START_BTN, digital GPIO, debounced)
+- Button LED ring driven by MCU PWM output (direct, not through TC4427A channel)
+
+**State machine (firmware):**
+- OFF → ACC → RUN → CRANK
+- Transitions based on button press + brake state
+- Short press without brake: OFF ↔ ACC
+- Short press with brake in ACC/RUN: → CRANK (momentary)
+- Long press in any state: → OFF (emergency shutdown)
+
+**Authentication hierarchy:**
+1. Phone (BLE) — primary, automatic proximity unlock
+2. Key fob (RF) — secondary, traditional remote
+3. HeadUnit PIN entry — tertiary, emergency backup
+
+**Architecture:**
+- Auth handled by HeadUnit/security module, NOT by PDCM
+- HeadUnit sends "authorized" CAN message to PDCM
+- PDCM will not transition out of OFF without valid auth
+- PDCM controls starter solenoid relay via one 10mΩ output channel
+
+**Removed:**
+- IGN_SW connector pin (was on J1 power connector)
+- KEY_RAW sensor input + KEY_ADC voltage divider
+- Key position resistor ladder circuit
+
+**Rationale:**
+- Modern keyless experience — phone-as-key is the primary interface
+- Simpler wiring — no ignition switch harness, no key position sensing
+- More flexible — authentication can be updated via firmware/software
+- Starter control through PDCM enables software-controlled crank limits and anti-flood logic
+
+---
+
+## ADR-012: Deutsch Connector Selection — Physical Routing Groups
+
+**Date**: 2026-03-13
+**Status**: Accepted
+
+**Decision:**
+13 Deutsch automotive connectors grouped by truck routing zone, not by channel number. Three connector series matched to wire gauge requirements.
+
+**Connector series:**
+- **HD (1 connector)**: J1 battery power — 8 AWG, 100A/pin rating. Handles 60-80A peak aggregate with margin.
+- **DT (8 connectors)**: J3-J7, J12-J13 load outputs — 14-18 AWG, 13-25A/pin. Matched to MOSFET output currents.
+- **DTM (4 connectors)**: J2, J8-J11 signals/switches — 20-24 AWG, 7.5A max. Appropriate for switch inputs and CAN bus.
+
+**Physical routing zones:**
+| Zone | Connectors | Rationale |
+|------|-----------|-----------|
+| Battery/firewall | J1 | Short heavy-gauge run from battery |
+| Internal bus | J2 | CAN FD shielded pair, stays inside PDCM enclosure area |
+| Engine bay | J3 | Fuel pump, fans, A/C, horn, axle — all under hood |
+| Front of truck | J4 | All forward-facing lights in one harness branch |
+| Rear of truck | J5 | Tail/brake/reverse/bed — single rear harness run |
+| Firewall pass-through | J6 | Cabin loads (blower, wiper, interior, seats) |
+| Under truck / t-case | J7 | 4WD motor + position sensor — routed to transfer case |
+| Steering column | J8 | Stalk switches — short run from column to PDCM |
+| Dashboard | J9 | Dash-mounted switches |
+| Brake pedal | J10 | **Isolated** — safety-critical BOP path, dedicated GND returns |
+| Transmission | J11 | Reverse switch + future trans signals |
+| Cabin electronics | J12 | Cameras, ADAS, amps, HU — all near dash/cabin |
+| Exterior aux | J13 | Rock/puddle lights + 6 expansion channels |
+
+**Key design decisions:**
+- **J10 brake switches isolated**: 50ms BOP path gets its own connector with per-switch dedicated GND returns. Eliminates ground-loop noise on safety-critical brake sensing.
+- **One wire per load**: Low-side switching means each connector pin carries the MOSFET drain only. Load +12V comes from upstream fuse panel, not from PDCM connectors.
+- **17 spare pins**: Distributed across connectors for future expansion without new harness runs.
+- **94 total pins**: 66 signals + 9 GND + 2 power + 17 spare.
+
+**Rationale:**
+- Grouping by zone means each connector = one clean harness branch to that area of the truck. No criss-crossing.
+- Deutsch DT/DTM/HD are the automotive industry standard — IP67 sealed, vibration-rated, field-serviceable with crimped contacts.
+- Matching connector series to wire gauge eliminates reducers and oversized pins.
+- Spare pins on each connector allow adding loads to a zone without running new harness branches.

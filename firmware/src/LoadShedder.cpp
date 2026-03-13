@@ -39,27 +39,27 @@ static const uint8_t channelPriority[] = {
     // Tier 2 channels
     (uint8_t)ShedPriority::COMFORT,     // 25 Amp remote 1
     (uint8_t)ShedPriority::COMFORT,     // 26 Amp remote 2
-    (uint8_t)ShedPriority::COMFORT,     // 27 Amp remote 3
-    (uint8_t)ShedPriority::COMFORT,     // 28 Amp remote 4
-    (uint8_t)ShedPriority::COMFORT,     // 29 HeadUnit enable
+    (uint8_t)ShedPriority::COMFORT,     // 27 HeadUnit enable
     // Tier 3 channels
-    (uint8_t)ShedPriority::COMFORT,     // 30 Front camera
-    (uint8_t)ShedPriority::COMFORT,     // 31 Rear camera
-    (uint8_t)ShedPriority::COMFORT,     // 32 Side cameras
-    (uint8_t)ShedPriority::COMFORT,     // 33 Parking sensors
-    (uint8_t)ShedPriority::COMFORT,     // 34 Radar/BSM
-    (uint8_t)ShedPriority::COMFORT,     // 35 GCM power
-    (uint8_t)ShedPriority::COMFORT,     // 36 GPS/cellular
-    (uint8_t)ShedPriority::COMFORT,     // 37 Dash cam
-    (uint8_t)ShedPriority::COMFORT,     // 38 Future module
-    (uint8_t)ShedPriority::DRIVING,     // 39 Rock lights
-    (uint8_t)ShedPriority::COMFORT,     // 40 Bed lights
-    (uint8_t)ShedPriority::COMFORT,     // 41 Puddle lights
-    (uint8_t)ShedPriority::COMFORT,     // 42 Future exterior
-    (uint8_t)ShedPriority::COMFORT,     // 43 Expansion 1
-    (uint8_t)ShedPriority::COMFORT,     // 44 Expansion 2
-    (uint8_t)ShedPriority::COMFORT,     // 45 Expansion 3
-    (uint8_t)ShedPriority::COMFORT,     // 46 Expansion 4
+    (uint8_t)ShedPriority::COMFORT,     // 28 Front camera
+    (uint8_t)ShedPriority::COMFORT,     // 29 Rear camera
+    (uint8_t)ShedPriority::COMFORT,     // 30 Side cameras
+    (uint8_t)ShedPriority::COMFORT,     // 31 Parking sensors
+    (uint8_t)ShedPriority::COMFORT,     // 32 Radar/BSM
+    (uint8_t)ShedPriority::COMFORT,     // 33 GCM power
+    (uint8_t)ShedPriority::COMFORT,     // 34 GPS/cellular
+    (uint8_t)ShedPriority::COMFORT,     // 35 Dash cam
+    (uint8_t)ShedPriority::COMFORT,     // 36 Future module
+    (uint8_t)ShedPriority::DRIVING,     // 37 Rock lights
+    (uint8_t)ShedPriority::COMFORT,     // 38 Bed lights
+    (uint8_t)ShedPriority::COMFORT,     // 39 Puddle lights
+    (uint8_t)ShedPriority::COMFORT,     // 40 Future exterior
+    (uint8_t)ShedPriority::COMFORT,     // 41 Expansion 1
+    (uint8_t)ShedPriority::COMFORT,     // 42 Expansion 2
+    (uint8_t)ShedPriority::COMFORT,     // 43 Expansion 3
+    (uint8_t)ShedPriority::COMFORT,     // 44 Expansion 4
+    (uint8_t)ShedPriority::COMFORT,     // 45 Expansion 5
+    (uint8_t)ShedPriority::COMFORT,     // 46 Expansion 6
 };
 
 static bool shedFlags[static_cast<int>(OutputChannel::NUM_CHANNELS)] = {};

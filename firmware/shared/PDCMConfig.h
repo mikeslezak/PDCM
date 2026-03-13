@@ -80,9 +80,7 @@ namespace Pin {
     // Tier 2 — Enable signals (low current, still direct GPIO)
     constexpr uint8_t CH_AMP_REMOTE_1   = 41;
     constexpr uint8_t CH_AMP_REMOTE_2   = 16;
-    constexpr uint8_t CH_AMP_REMOTE_3   = 17;
-    constexpr uint8_t CH_AMP_REMOTE_4   = 20;
-    constexpr uint8_t CH_HEADUNIT_EN    = 21;
+    constexpr uint8_t CH_HEADUNIT_EN    = 17;
 
     // --- H-Bridge (DRV8876) for 4WD encoder motor ---
     // CAN1 on pins 22/23 — H-bridge uses 24/25 (PWM capable)
@@ -147,30 +145,30 @@ namespace Exp1PortB {
 }
 
 // --- MCP23S17 #2: Tier 3 Output Channels (cameras, modules, exterior, expansion) ---
-// Port A: Channels 31-38
+// Port A: Channels 28-35
 namespace Exp2PortA {
-    constexpr uint8_t CH_CAM_FRONT          = 0;   // Ch 31
-    constexpr uint8_t CH_CAM_REAR           = 1;   // Ch 32
-    constexpr uint8_t CH_CAM_SIDE           = 2;   // Ch 33
-    constexpr uint8_t CH_PARKING_SENSORS    = 3;   // Ch 34
-    constexpr uint8_t CH_RADAR_BSM          = 4;   // Ch 35
-    constexpr uint8_t CH_GCM_POWER          = 5;   // Ch 36
-    constexpr uint8_t CH_GPS_CELL           = 6;   // Ch 37
-    constexpr uint8_t CH_DASH_CAM           = 7;   // Ch 38
+    constexpr uint8_t CH_CAM_FRONT          = 0;   // Ch 28
+    constexpr uint8_t CH_CAM_REAR           = 1;   // Ch 29
+    constexpr uint8_t CH_CAM_SIDE           = 2;   // Ch 30
+    constexpr uint8_t CH_PARKING_SENSORS    = 3;   // Ch 31
+    constexpr uint8_t CH_RADAR_BSM          = 4;   // Ch 32
+    constexpr uint8_t CH_GCM_POWER          = 5;   // Ch 33
+    constexpr uint8_t CH_GPS_CELL           = 6;   // Ch 34
+    constexpr uint8_t CH_DASH_CAM           = 7;   // Ch 35
 }
 
-// Port B: Channels 39-47
+// Port B: Channels 36-46
 namespace Exp2PortB {
-    constexpr uint8_t CH_FUTURE_MODULE      = 0;   // Ch 39
-    constexpr uint8_t CH_ROCK_LIGHTS        = 1;   // Ch 40
-    constexpr uint8_t CH_BED_LIGHTS         = 2;   // Ch 41
-    constexpr uint8_t CH_PUDDLE_LIGHTS      = 3;   // Ch 42
-    constexpr uint8_t CH_FUTURE_EXTERIOR    = 4;   // Ch 43
-    constexpr uint8_t CH_EXPANSION_1        = 5;   // Ch 44
-    constexpr uint8_t CH_EXPANSION_2        = 6;   // Ch 45
-    constexpr uint8_t CH_EXPANSION_3        = 7;   // Ch 46
-    // Ch 47 (EXPANSION_4) would need a 3rd MCP23S17 or a free Teensy pin
-    // For prototype, 46 channels via 2× MCP23S17 is sufficient
+    constexpr uint8_t CH_FUTURE_MODULE      = 0;   // Ch 36
+    constexpr uint8_t CH_ROCK_LIGHTS        = 1;   // Ch 37
+    constexpr uint8_t CH_BED_LIGHTS         = 2;   // Ch 38
+    constexpr uint8_t CH_PUDDLE_LIGHTS      = 3;   // Ch 39
+    constexpr uint8_t CH_FUTURE_EXTERIOR    = 4;   // Ch 40
+    constexpr uint8_t CH_EXPANSION_1        = 5;   // Ch 41
+    constexpr uint8_t CH_EXPANSION_2        = 6;   // Ch 42
+    constexpr uint8_t CH_EXPANSION_3        = 7;   // Ch 43
+    // Ch 44 (EXPANSION_4), 45 (EXPANSION_5), 46 (EXPANSION_6) need 3rd MCP23S17
+    // or free Teensy pins. For prototype, 43 channels via 2× MCP23S17 is sufficient
 }
 
 // --- ADC MUX Channel Mapping ---
@@ -184,14 +182,15 @@ namespace Exp2PortB {
 
 // --- Current Sense Configuration ---
 // Shunt voltage = I × R_shunt
-// ADC_mV = shunt_voltage × amplifier_gain (if using op-amp, gain ~50)
-// For direct ADC: V_shunt at 10A through 10mΩ = 100mV (within Teensy ADC range)
+// ADC_mV = shunt_voltage × amplifier_gain
+// INA180A1 gain = 20, universal across all channels (ADR-010)
+// 10mΩ × 16A × 20 = 3.2V, 50mΩ × 3.3A × 20 = 3.3V — both within ADC range
 namespace CurrentSense {
     constexpr uint8_t  NUM_MUX_ICS          = 3;
     constexpr uint8_t  CHANNELS_PER_MUX     = 16;
     constexpr uint16_t ADC_RESOLUTION       = 4096;     // 12-bit
     constexpr uint16_t ADC_REF_MV           = 3300;     // 3.3V reference
-    constexpr uint8_t  AMPLIFIER_GAIN       = 50;       // INA180 or similar
+    constexpr uint8_t  AMPLIFIER_GAIN       = 20;       // INA180A1 (gain 20)
 }
 
 // --- Battery Voltage Divider ---

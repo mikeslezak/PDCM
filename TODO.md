@@ -30,28 +30,37 @@
 - [x] Platform structs — VehicleMessages.h updated with all PDCM message structs
 
 ### Phase 3 — Hardware Design (CURRENT)
-- [ ] S32K358 pin allocation (PDCMConfig_S32K358.h)
-- [ ] Schematic — Power input (12V, TVS, reverse polarity, 5V + 3.3V regulators)
-- [ ] Schematic — S32K358 MCU (HDQFP-172, decoupling, crystal, reset)
-- [ ] Schematic — CAN FD transceiver (MCP2562FD)
-- [ ] Schematic — TC4427A gate driver circuits (24 ICs × 2 channels)
-- [ ] Schematic — IRFZ44N MOSFET output stages (46 channels)
-- [ ] Schematic — Per-channel upstream fusing (PTC or blade)
-- [ ] Schematic — Current sense amplifiers (INA180 × 48) → direct to S32K358 ADC
-- [ ] Schematic — DRV8876 H-bridge (4WD encoder motor)
-- [ ] Schematic — Switch input conditioning (stalks, buttons) → direct GPIO
-- [ ] Schematic — Dual brake switch inputs (direct GPIO)
-- [ ] Schematic — Key position resistor ladder → ADC
-- [ ] Schematic — Battery voltage divider → ADC
-- [ ] Schematic — 4WD position potentiometer → ADC
-- [ ] Schematic — Seat heater redundant MOSFET (safety)
-- [ ] Schematic — Input protection (TVS + series resistors)
-- [ ] Schematic — JTAG/SWD debug header
+- [x] Channel allocation update — 2 amp remotes (was 4), 6 expansion (was 4)
+- [x] Universal output circuit — two shunt sizes (ADR-010: 10mΩ ×36 + 50mΩ ×10, 100mΩ eliminated)
+- [x] KiCad schematic generator (`hardware/schematic/generate_schematic.py`)
+- [x] Schematic — Power input (12V, TVS, reverse polarity, LM2596S-5 → AMS1117-3.3)
+- [x] Schematic — S32K358 MCU (HDQFP-172, 15× decoupling, crystal, reset, JTAG)
+- [x] Schematic — CAN FD transceiver (MCP2562FD)
+- [x] Schematic — TC4427A gate driver circuits (23 ICs × 2 channels)
+- [x] Schematic — IRFZ44N MOSFET output stages (46 channels + shunts + INA180)
+- [x] Schematic — DRV8876 H-bridge (4WD encoder motor)
+- [x] Schematic — Switch input conditioning (15 switches incl. START_BTN, direct GPIO)
+- [x] Schematic — Connectors (power, CAN, loads, switches, sensors)
+- [x] Schematic — Root sheet with 10 hierarchical sub-sheets
+- [x] S32K358 pin allocation — 120 pins assigned from IOMUX spreadsheet
+  - [x] PDCMConfig_S32K358.h — complete with real HDQFP-172 pad numbers
+  - [x] eMIOS1 PWM: 14 channels (CH2-CH18) on verified bonded pins
+  - [x] CAN FD: PTC2/PTC3 (pads 49/50), JTAG: PTA4/PTA10/PTC4/PTC5
+  - [x] 34 gate driver GPIO + 2 H-bridge ctrl + 15 switch inputs
+  - [x] 49 ADC channels: ADC0 (20) + ADC1 (16) + ADC2 (13) — all unique
+  - [x] Physical pad numbers from NXP S32K358_IOMUX.xlsx (extracted from Reference Manual)
+  - [x] Allocation script: `hardware/schematic/s32k358_pin_allocator.py`
+  - [x] Report: `hardware/schematic/pin_allocation_report.txt`
+- [x] Schematic review — all 232 inter-sheet labels verified, 0 mismatches
+- [x] ERC pass in KiCad 9 (0 errors, 2 warnings — custom symbols only)
 - [ ] PCB layout
-- [ ] Connector pinout documentation (Deutsch connectors)
-- [ ] BOM
+- [x] Connector pinout documentation (Deutsch connectors, ADR-012, 13 connectors by routing zone)
+- [ ] BOM finalization
 
 ### Phase 4 — S32K358 Toolchain & HAL
+- [ ] Push-button start firmware module (state machine: OFF→ACC→RUN→CRANK)
+- [ ] Authentication CAN message definition (HeadUnit → PDCM auth grant)
+- [ ] Starter solenoid output channel assignment + crank timeout logic
 - [ ] Set up NXP S32 Design Studio + RTD SDK
 - [ ] Acquire PEmicro Multilink or Lauterbach JTAG debugger
 - [ ] Implement S32KHAL.cpp (GPIO, ADC, PWM, CAN FD, SWT watchdog)

@@ -142,8 +142,6 @@ void update() {
     // --- Amp remotes (on when key is RUN or ACC) ---
     GateDriver::set(OutputChannel::AMP_REMOTE_1, accOn);
     GateDriver::set(OutputChannel::AMP_REMOTE_2, accOn);
-    GateDriver::set(OutputChannel::AMP_REMOTE_3, accOn);
-    GateDriver::set(OutputChannel::AMP_REMOTE_4, accOn);
 
     // --- HeadUnit enable (on when key is ACC or RUN) ---
     GateDriver::set(OutputChannel::HEADUNIT_ENABLE, accOn);

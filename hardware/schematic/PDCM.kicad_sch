@@ -1,0 +1,261 @@
+(kicad_sch
+	(version 20250114)
+	(generator "pdcm_generator")
+	(generator_version "1.0")
+	(uuid "c0000000-0000-4000-8000-000000000001")
+	(paper "A3")
+
+	(lib_symbols
+	)
+
+	(text "PDCM — Power Distribution & Control Module" (at 50 20 0)
+		(effects (font (size 2 2)))
+		(uuid "d5b546a5-f4f9-4c84-9084-9966fc897201")
+	)
+
+	(text "Black Frog Built — 1998 Chevy Silverado" (at 50 30 0)
+		(effects (font (size 2 2)))
+		(uuid "80e5304c-9240-43e7-8a1f-319c8eab560e")
+	)
+
+	(text "47 TC4427A Channels + 1 DRV8876 H-Bridge" (at 50 40 0)
+		(effects (font (size 2 2)))
+		(uuid "33b87d14-9bea-4b52-bef7-6a92d0f21478")
+	)
+
+	(sheet (at 30 60) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000001")
+		(property "Sheetname" "Power Input"
+			(at 30 59 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "power_input.kicad_sch"
+			(at 30 101 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet (at 130 60) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000002")
+		(property "Sheetname" "MCU (S32K358)"
+			(at 130 59 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "mcu.kicad_sch"
+			(at 130 101 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet (at 230 60) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000003")
+		(property "Sheetname" "CAN Bus"
+			(at 230 59 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "can_bus.kicad_sch"
+			(at 230 101 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet (at 330 60) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000004")
+		(property "Sheetname" "Gate Drivers A"
+			(at 330 59 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "gate_drivers_a.kicad_sch"
+			(at 330 101 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet (at 30 120) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000005")
+		(property "Sheetname" "Gate Drivers B"
+			(at 30 119 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "gate_drivers_b.kicad_sch"
+			(at 30 161 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet (at 130 120) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000006")
+		(property "Sheetname" "Output Stage A"
+			(at 130 119 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "output_stage_a.kicad_sch"
+			(at 130 161 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet (at 230 120) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000007")
+		(property "Sheetname" "Output Stage B"
+			(at 230 119 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "output_stage_b.kicad_sch"
+			(at 230 161 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet (at 330 120) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000008")
+		(property "Sheetname" "H-Bridge"
+			(at 330 119 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "hbridge.kicad_sch"
+			(at 330 161 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet (at 30 180) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-000000000009")
+		(property "Sheetname" "Switch Inputs"
+			(at 30 179 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "switch_inputs.kicad_sch"
+			(at 30 221 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "10")
+				)
+			)
+		)
+	)
+	(sheet (at 130 180) (size 80 40)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(stroke (width 0.1524) (type solid))
+		(fill (color 0 0 0 0.0000))
+		(uuid "d0000000-0000-4000-8000-00000000000a")
+		(property "Sheetname" "Connectors"
+			(at 130 179 0)
+			(effects (font (size 1.524 1.524)) (justify left bottom)))
+		(property "Sheetfile" "connectors.kicad_sch"
+			(at 130 221 0)
+			(effects (font (size 1.27 1.27)) (justify left top))
+		)
+		(instances
+			(project "PDCM"
+				(path "/c0000000-0000-4000-8000-000000000001"
+					(page "11")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1"))
+	)
+	(embedded_fonts no)
+)

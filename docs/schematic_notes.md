@@ -31,7 +31,7 @@ With 172 pins, all 47 gate driver outputs, all switch inputs, and all ADC channe
 
 ### MOSFET — IRFZ44N
 - **Part**: Infineon IRFZ44NPBF (TO-220)
-- **Qty**: ~46 (47 channels minus H-bridge)
+- **Qty**: 46 (46 TC4427A channels, H-bridge uses DRV8876)
 - **Key specs**: 55V, 49A, 17.5mΩ Rds(on), TO-220
 - **Low-side switching**: Drain → load, Source → shunt → GND
 - **Heat**: At 10A continuous, P = I²R = 1.75W. TO-220 can handle this without heatsink at typical ambient. At 20A, 7W — needs heatsink or airflow.
@@ -43,16 +43,13 @@ With 172 pins, all 47 gate driver outputs, all switch inputs, and all ADC channe
 - **Circuit**: VM → 12V, IN1/IN2 → MCU GPIO (PWM), nSLEEP → MCU GPIO, nFAULT → MCU GPIO (input, pullup), IPROPI → 1kΩ to GND + ADC
 - **Used for**: NP246 transfer case encoder motor (bidirectional, ~2A)
 
-### Current Sense Amplifier — INA180
-- **Part**: TI INA180A1IDBVR (SOT-23-5), gain = 20
-- or INA180A3IDBVR, gain = 100 (for high-resistance shunts)
-- **Qty**: 48 (one per channel)
-- **Circuit**: IN+ → MOSFET source (high side of shunt), IN- → GND side of shunt, OUT → MUX input
-- **Gain selection per shunt value**:
-  - 10mΩ shunt, 10A max: V_shunt = 100mV, gain 20 → V_out = 2.0V ✓
-  - 50mΩ shunt, 8A max: V_shunt = 400mV, gain 20 → V_out = 8.0V (clipped to VCC). Use gain 5 or 10.
-  - 100mΩ shunt, 3A max: V_shunt = 300mV, gain 10 → V_out = 3.0V ✓
-- **Note**: Gain selection needs per-group tuning. May use INA180A1 (×20) for 10mΩ shunts, INA180A2 (×50) for 50mΩ, INA180A1 for 100mΩ.
+### Current Sense Amplifier — INA180A1
+- **Part**: TI INA180A1IDBVR (SOT-23-5), gain = 20 — KiCad symbol: `INA180A1` (no package suffix)
+- **Qty**: 46 (one per TC4427A output channel, excludes H-bridge which has built-in sense)
+- **Circuit**: IN+ → MOSFET source (high side of shunt), IN- → GND side of shunt, OUT → ADC
+- **Single gain variant (ADR-010)**: INA180A1 (gain 20) universal across all channels
+  - 10mΩ shunt, 16A max: V_shunt = 160mV, gain 20 → V_out = 3.2V ✓
+  - 50mΩ shunt, 3.3A max: V_shunt = 165mV, gain 20 → V_out = 3.3V ✓
 
 ### ~~Analog MUX — CD74HC4067~~ (REMOVED — ADR-009)
 Not needed. S32K358 has 2× SAR ADC with 40+ external channels — direct ADC per shunt.
@@ -60,10 +57,9 @@ Not needed. S32K358 has 2× SAR ADC with 40+ external channels — direct ADC pe
 ### ~~Port Expander — MCP23S17~~ (REMOVED — ADR-009)
 Not needed. S32K358 HDQFP-172 has enough GPIO for all 47 outputs + all switch inputs directly.
 
-### Shunt Resistors
-- **10mΩ**: Fuel pump, fans, blower, A/C, seat heaters, light bar (6 channels)
-- **50mΩ**: Headlights, horn, wiper, accessory, rock lights (9 channels)
-- **100mΩ**: All remaining channels (32 channels)
+### Shunt Resistors (ADR-010: Two Sizes Only)
+- **10mΩ × 36 channels**: All Tier 1 loads (Ch 0–23) + cameras/modules/exterior (Ch 28–39)
+- **50mΩ × 10 channels**: Enable signals (Ch 25–27) + future/expansion (Ch 40–46)
 - **Package**: 2512 or 2010 (need adequate power rating)
 - **Tolerance**: 1% for accurate current measurement
 
@@ -123,14 +119,38 @@ MCU GPIO ──→ TC4427A IN ──→ TC4427A OUT ──→ [100Ω] ──→ 
 | TC4427A gate driver | 24 | Dual channel, on hand |
 | IRFZ44N MOSFET | ~46 | TO-220 |
 | DRV8876 H-bridge | 1 | WSON-8, 4WD motor |
-| INA180 current sense amp | 48 | SOT-23-5 |
+| INA180A1 current sense amp | 46 | SOT-23-5 |
 | MCP2562FD CAN transceiver | 1 | CAN FD, 8-pin |
-| Shunt resistors (2512) | 47 | 10/50/100mΩ per channel |
+| Shunt resistors (2512) | 46 | 10mΩ ×36 + 50mΩ ×10 (H-bridge has built-in sense) |
 | Voltage regulator (5V) | 1 | 12V → 5V |
 | Voltage regulator (3.3V) | 1 | 5V → 3.3V |
 | Crystal (8/16 MHz) | 1 | For S32K358 PLL |
-| Upstream fuses | 47 | PTC or blade, per channel |
+| Upstream fuses | 46 | PTC or blade, per TC4427A channel |
 | ~~CD74HC4067 MUX~~ | ~~0~~ | Removed — direct ADC |
 | ~~MCP23S17 expander~~ | ~~0~~ | Removed — direct GPIO |
 
-**Total active ICs: ~78** (1 MCU + 24 gate drivers + 48 current sense amps + 1 H-bridge + 1 CAN xcvr + 2 regulators + 1 crystal)
+**Total active ICs: ~76** (1 MCU + 23 gate drivers + 46 current sense amps + 1 H-bridge + 1 CAN xcvr + 2 regulators + 1 crystal)
+
+## Switch Inputs (15 total)
+| Switch | Notes |
+|--------|-------|
+| TURN_L | Turn signal left stalk |
+| TURN_R | Turn signal right stalk |
+| HIGH_BEAM | High beam select |
+| FLASH_PASS | Flash-to-pass |
+| HAZARD | Hazard switch |
+| HORN | Horn button |
+| REVERSE | Reverse gear position |
+| AC_REQ | A/C request |
+| WIPER_INT | Wiper intermittent |
+| WIPER_LO | Wiper low speed |
+| WIPER_HI | Wiper high speed |
+| WASHER | Washer fluid |
+| BRAKE_SW1 | Brake switch 1 (direct GPIO) |
+| BRAKE_SW2 | Brake switch 2 (direct GPIO) |
+| START_BTN | Push-button start (ADR-011) |
+
+## Push-Button Start (ADR-011)
+- Momentary push button → PDCM GPIO (SW_START_BTN)
+- Starter solenoid relay controlled via 10mΩ output channel
+- Auth via CAN from HeadUnit (phone BLE / key fob / PIN)

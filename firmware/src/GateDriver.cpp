@@ -41,9 +41,7 @@ static const uint8_t directPins[] = {
     0,                      // 24 (H-bridge — not in this table)
     Pin::CH_AMP_REMOTE_1,   // 25 AMP_REMOTE_1
     Pin::CH_AMP_REMOTE_2,   // 26 AMP_REMOTE_2
-    Pin::CH_AMP_REMOTE_3,   // 27 AMP_REMOTE_3
-    Pin::CH_AMP_REMOTE_4,   // 28 AMP_REMOTE_4
-    Pin::CH_HEADUNIT_EN,    // 29 HEADUNIT_ENABLE
+    Pin::CH_HEADUNIT_EN,    // 27 HEADUNIT_ENABLE
 };
 
 static constexpr uint8_t NUM_DIRECT_PINS = sizeof(directPins) / sizeof(directPins[0]);
@@ -109,9 +107,9 @@ void set(OutputChannel ch, bool on) {
     if (idx < NUM_DIRECT_PINS && idx != 24) {
         // Direct GPIO channel
         HAL::gpio_write(directPins[idx], on);
-    } else if (idx >= 30 && idx <= 46) {
+    } else if (idx >= 28 && idx <= 46) {
         // Tier 3: MCP23S17 #2
-        uint8_t exp_idx = idx - 30;
+        uint8_t exp_idx = idx - 28;
         uint8_t port = (exp_idx < 8) ? 0 : 1;
         uint8_t bit = exp_idx % 8;
 

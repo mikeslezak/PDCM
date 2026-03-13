@@ -1,0 +1,31 @@
+ERC report (2026-03-12T21:46:40-0600, Encoding UTF8)
+
+***** Sheet /
+[lib_symbol_issues]: Symbol 'S32K358' not found in symbol library 'PDCM'
+    ; warning
+    @(149.86 mm, 129.54 mm): Symbol U_MCU [S32K358]
+[lib_symbol_issues]: Symbol 'DRV8876' not found in symbol library 'PDCM'
+    ; warning
+    @(100.33 mm, 80.01 mm): Symbol U_HB [DRV8876]
+
+***** Sheet /Power Input/
+
+***** Sheet /MCU (S32K358)/
+
+***** Sheet /CAN Bus/
+
+***** Sheet /Gate Drivers A/
+
+***** Sheet /Gate Drivers B/
+
+***** Sheet /Output Stage A/
+
+***** Sheet /Output Stage B/
+
+***** Sheet /H-Bridge/
+
+***** Sheet /Switch Inputs/
+
+***** Sheet /Connectors/
+
+ ** ERC messages: 2  Errors 0  Warnings 2

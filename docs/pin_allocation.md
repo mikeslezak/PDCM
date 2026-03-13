@@ -25,8 +25,8 @@ All 47 channels on direct S32K358 GPIO. No port expanders.
 | Tier 1 power | Fuel pump, fans, blower, A/C | 5 | Some PWM-capable |
 | Tier 1 lights | Low/high beam, turns, brake, reverse, DRL, interior, courtesy | 13 | All PWM-capable |
 | Tier 1 misc | Horn, wiper, accessory, front axle, seat heaters, light bar | 7 | Seat heaters PWM |
-| Tier 2 enables | Amp remotes ×4, HeadUnit | 5 | Low current |
-| Tier 3 sub-loads | Cameras, sensors, modules, aux lighting, expansion | 17 | On/off only |
+| Tier 2 enables | Amp remotes ×2, HeadUnit | 3 | Low current |
+| Tier 3 sub-loads | Cameras, sensors, modules, aux lighting, expansion ×6 | 19 | On/off only |
 | **Total** | | **47** | |
 
 ### H-Bridge (DRV8876) — 4 GPIO + 1 ADC
@@ -66,7 +66,7 @@ All ADC inputs direct to S32K358 SAR ADC. No analog MUX.
 
 | Function | Count | Notes |
 |----------|-------|-------|
-| Current sense shunts (via INA180) | 47 | One per output channel |
+| Current sense shunts (via INA180A1) | 47 | One per output channel (10mΩ ×36, 50mΩ ×10) |
 | Battery voltage divider | 1 | 10k/3.3k divider |
 | Key position resistor ladder | 1 | 4-position decode |
 | 4WD position potentiometer | 1 | Transfer case position |

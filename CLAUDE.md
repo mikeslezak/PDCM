@@ -1,22 +1,22 @@
 # PDCM — Claude Code Instructions
 
 ## What This Is
-Full solid-state Power Distribution & Control Module for a 1998 Chevy Silverado custom electronics platform. 47 TC4427A-driven MOSFET channels + 1 DRV8876 H-bridge = 48 switched outputs. Per-channel current sensing, software overcurrent protection, 4-tier load shedding.
+Full solid-state Power Distribution & Control Module for a 1998 Chevy Silverado custom electronics platform. 46 TC4427A-driven MOSFET channels + 1 DRV8876 H-bridge = 47 switched outputs. Per-channel current sensing, software overcurrent protection, 4-tier load shedding. Push-button start (ADR-011).
 
 Passive executor — receives commands and reports states but does not make engine control decisions.
 
 ## Architecture
 - **Output topology**: GPIO → TC4427A dual gate driver → 100Ω → IRFZ44N gate, 10kΩ pulldown
-- **Current sensing**: Low-side shunt resistors on every channel, direct ADC per channel (no MUX)
+- **Current sensing**: Low-side shunt (10mΩ ×36 + 50mΩ ×10) → INA180A1 (gain 20) → direct ADC (no MUX)
 - **Switch inputs**: All direct GPIO (no port expanders)
 - **Safety**: 3-layer protection (upstream fuse + firmware stuck-on detection + redundant switching on fire-risk channels)
-- **47 channels**: 25 switched + 5 enable + 17 sub-loads + H-bridge
+- **46+1 channels**: 24 switched + 3 enable + 19 sub-loads (TC4427A) + 1 H-bridge (DRV8876)
 - **Zero mechanical relays**
 
 ## MCU
 - **NXP S32K358** (dual CM7 @ 240MHz, AEC-Q100 Grade 1, lockstep, 6× CAN FD, HDQFP-172)
 - Building directly on S32K358 from day one — no Teensy prototype phase (ADR-009)
-- 172 pins = enough for all 47 outputs + all inputs + ADC, no external I/O expanders
+- 172 pins = enough for all 46 outputs + 15 switch inputs + all ADC, no external I/O expanders
 - **HAL**: `firmware/hal/` abstracts MCU-specific code. Firmware modules are platform-independent.
 - Build: CMake + NXP S32 Design Studio + RTD SDK
 - Debug: PEmicro or Lauterbach JTAG
@@ -94,7 +94,7 @@ firmware/
 - PDCM is a passive executor — never make engine decisions.
 - Brake switches on DIRECT GPIO — never behind SPI/I2C.
 - Brake state at 50ms rate — safety-critical path for BOP.
-- Document decisions in DECISIONS.md (ADR-001 through ADR-009).
+- Document decisions in DECISIONS.md (ADR-001 through ADR-011).
 
 ## Environment
 - Firmware: C++ (bare-metal, NXP RTD SDK)

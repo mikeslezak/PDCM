@@ -9,44 +9,46 @@
 
 static constexpr uint8_t TOTAL_CHANNELS = static_cast<uint8_t>(OutputChannel::NUM_CHANNELS);
 
-// Per-channel shunt resistance in milliohms
+// Per-channel shunt resistance in milliohms (ADR-010: two sizes only)
+// 10mΩ × 36 channels (heavy, 1–16A) + 50mΩ × 10 channels (light, 0.3–3.3A)
 static const uint16_t shuntMohm[TOTAL_CHANNELS] = {
     10,  10,  10,  10,  10,     // Ch 0-4:   Fuel pump, Fan1, Fan2, Blower, A/C
-    50,  50,  50,  50,          // Ch 5-8:   Low beams, High beams
-    100, 100,                   // Ch 9-10:  Turn signals
-    100, 100,                   // Ch 11-12: Brake lights
-    100, 100, 100, 100,         // Ch 13-16: Reverse, DRL, Interior, Courtesy
-    50,  50,  50,               // Ch 17-19: Horn, Wiper, Accessory
-    100,                        // Ch 20:    Front axle
+    10,  10,  10,  10,          // Ch 5-8:   Low beams, High beams
+    10,  10,                    // Ch 9-10:  Turn signals
+    10,  10,                    // Ch 11-12: Brake lights
+    10,  10,  10,  10,          // Ch 13-16: Reverse, DRL, Interior, Courtesy
+    10,  10,  10,               // Ch 17-19: Horn, Wiper, Accessory
+    10,                         // Ch 20:    Front axle
     10,  10,                    // Ch 21-22: Seat heaters
     10,                         // Ch 23:    Light bar
     0,                          // Ch 24:    H-bridge (sensed separately)
-    100, 100, 100, 100, 100,    // Ch 25-29: Amp remotes, HeadUnit (enable signals)
-    100, 100, 100, 100, 100,    // Ch 30-34: Cameras, parking, radar
-    100, 100, 100, 100,         // Ch 35-38: GCM, GPS, dash cam, future
-    50,                         // Ch 39:    Rock lights
-    100, 100, 100,              // Ch 40-42: Bed, puddle, future exterior
-    100, 100, 100, 100,         // Ch 43-46: Expansion 1-4
+    50,  50,  50,               // Ch 25-27: Amp remotes, HeadUnit (enable signals)
+    10,  10,  10,  10,  10,     // Ch 28-32: Cameras, parking, radar
+    10,  10,  10,  10,          // Ch 33-36: GCM, GPS, dash cam, future module
+    10,  10,  10,               // Ch 37-39: Rock lights, bed lights, puddle
+    50,                         // Ch 40:    Future exterior
+    50,  50,  50,  50,  50,  50,// Ch 41-46: Expansion 1-6
 };
 
-// Per-channel overcurrent thresholds in mA
+// Per-channel overcurrent thresholds in mA (independent of shunt value)
 static const uint16_t overcurrentMA[TOTAL_CHANNELS] = {
-    15000, 15000, 15000, 12000, 8000,    // Fuel pump, fans, blower, A/C
-    8000,  8000,  8000,  8000,           // Headlights
-    3000,  3000,                          // Turn signals
-    3000,  3000,                          // Brake lights
-    3000,  2000,  2000,  2000,           // Reverse, DRL, Interior, Courtesy
-    8000,  8000,  8000,                  // Horn, Wiper, Accessory
-    5000,                                 // Front axle
-    10000, 10000,                         // Seat heaters
-    20000,                                // Light bar
-    0,                                    // H-bridge
-    500,   500,   500,   500,   1000,    // Amp remotes, HeadUnit
-    2000,  2000,  2000,  2000,  2000,    // Cameras, parking, radar
-    2000,  2000,  2000,  2000,           // GCM, GPS, dash cam, future
-    5000,                                 // Rock lights
-    2000,  2000,  2000,                  // Bed, puddle, future
-    5000,  5000,  5000,  5000,           // Expansion
+    15000, 15000, 15000, 12000, 8000,    // Ch 0-4:   Fuel pump, fans, blower, A/C
+    8000,  8000,  8000,  8000,           // Ch 5-8:   Low beams, High beams
+    3000,  3000,                          // Ch 9-10:  Turn signals
+    3000,  3000,                          // Ch 11-12: Brake lights
+    3000,  2000,  2000,  2000,           // Ch 13-16: Reverse, DRL, Interior, Courtesy
+    8000,  8000,  8000,                  // Ch 17-19: Horn, Wiper, Accessory
+    5000,                                 // Ch 20:    Front axle
+    10000, 10000,                         // Ch 21-22: Seat heaters
+    20000,                                // Ch 23:    Light bar
+    0,                                    // Ch 24:    H-bridge
+    500,   500,   500,                   // Ch 25-27: Amp remotes, HeadUnit
+    500,   1000,                          // Ch 28-29: Cameras (front, rear)
+    2000,  2000,  2000,                  // Ch 30-32: Side cams, parking, radar
+    2000,  2000,  2000,  2000,           // Ch 33-36: GCM, GPS, dash cam, future module
+    2000,  2000,  5000,                  // Ch 37-39: Rock lights, bed lights, puddle
+    2000,  2000,  2000,                  // Ch 40-42: Future exterior, expansion 1-2
+    5000,  5000,  5000,  5000,           // Ch 43-46: Expansion 3-6
 };
 
 // Measured raw ADC values (updated during scan)
